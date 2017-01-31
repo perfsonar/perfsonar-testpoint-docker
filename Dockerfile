@@ -8,7 +8,7 @@ RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Inter
 RUN yum -y install Internet2-repo-staging
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
-RUN yum -y install supervisor net-tools systat tcsh tcpdump # grab a few other favorite tools
+RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
