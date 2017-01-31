@@ -6,7 +6,7 @@ http://docs.perfsonar.net/install_options.html
 This can be used to run perfSONAR 4.0 Testpoint services on any OS that supports docker.
 
 Download the container:
->docker pull bltierney/perfsonar4.0 -testpoint-docker
+>docker pull bltierney/perfsonar4.0-testpoint-docker
 
 To register your perfSONAR testpoint, start a container shell, and edit the file
 /etc/perfsonar/lsregistrationdaemon.conf with the location and administrator information for your site.
