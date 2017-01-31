@@ -14,13 +14,13 @@ To register your perfSONAR testpoint, start a container shell, and edit the file
 If this host will be part of a centrally configured mesh, also edit the file 
 /etc/perfsoanr/meshconfig-agent.conf, and update the 'configuration_url'.
 
->docker run -it bltierney/perfsonar-testpoint-docker /bin/bash
+>docker run -it bltierney/perfsonar4.0-testpoint-docker /bin/bash
 
 After editing the configuration files, exit the container and commit the change.
-> docker commit -m "added config settings" containerID bltierney/perfsonar-testpoint-docker
+> docker commit -m "added config settings" containerID bltierney/perfsonar4.0-testpoint-docker
 
 Run the container:
->docker run -d -P --net=host -v /var/run bltierney/perfsonar-testpoint-docker
+>docker run -d -P --net=host -v /var/run bltierney/perfsonar4.0-testpoint-docker
 
 ## Testing
 
