@@ -12,7 +12,7 @@ To register your perfSONAR testpoint, start a container shell, and edit the file
 /etc/perfsonar/lsregistrationdaemon.conf with the location and administrator information for your site.
 
 If this host will be part of a centrally configured mesh, also edit the file 
-/etc/perfsoanr/meshconfig-agent.conf, and update the 'configuration_url'.
+/etc/perfsonar/meshconfig-agent.conf, and update the 'configuration_url'.
 
 >docker run -it bltierney/perfsonar4.0-testpoint-docker /bin/bash
 
