@@ -9,10 +9,11 @@ RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
 # initialize pscheduler database
-RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
-RUN pscheduler internal db-update
-RUN /usr/pgsql-9.5/bin/pg_ctl stop
-
+#RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
+#RUN pscheduler internal db-update
+#RUN /usr/pgsql-9.5/bin/pg_ctl stop
+# trying another method
+RUN service postgresql start && pscheduler internal db-update && service postgresql stop
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
