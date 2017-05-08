@@ -5,10 +5,11 @@ MAINTAINER Brian Tierney <bltierney@es.net>
 
 RUN yum -y install epel-release
 RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Internet2-repo-0.7-1.noarch.rpm 
-RUN yum -y install Internet2-repo-staging
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
+# initialize pscheduler database
+RUN pscheduler internal db-update
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
