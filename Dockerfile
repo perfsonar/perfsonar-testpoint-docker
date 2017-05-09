@@ -8,12 +8,14 @@ RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Inter
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
+
 # initialize pscheduler database
-#RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
-#RUN pscheduler internal db-update
-#RUN /usr/pgsql-9.5/bin/pg_ctl stop
-# trying another method
-RUN service postgresql start && pscheduler internal db-update && service postgresql stop
+ENV PGDATA /var/lib/pgsql/9.5/data
+RUN /usr/pgsql-9.5/bin/initdb
+RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
+RUN pscheduler internal db-update
+RUN /usr/pgsql-9.5/bin/pg_ctl stop
+
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
@@ -24,8 +26,9 @@ ADD supervisord.conf /etc/supervisord.conf
 # owamp:861, 8760-9960
 # ranges not supported in docker, so need to use docker run -P to expose all ports
 
-# add pid directory
-VOLUME /var/run
+# add pid directory and postgres directory
+VOLUME ["/var/run", "/var/lib/pgsql"]
+
 
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
 
