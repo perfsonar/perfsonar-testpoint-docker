@@ -11,11 +11,10 @@ RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other 
 
 # initialize pscheduler database
 ENV PGDATA /var/lib/pgsql/9.5/data
-RUN /usr/pgsql-9.5/bin/initdb
+RUN su postgres -c "/usr/pgsql-9.5/bin/initdb"
 RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
 RUN pscheduler internal db-update
 RUN /usr/pgsql-9.5/bin/pg_ctl stop
-
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
