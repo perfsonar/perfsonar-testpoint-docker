@@ -3,20 +3,63 @@
 FROM centos:centos7
 MAINTAINER Brian Tierney <bltierney@es.net>
 
+
 RUN yum -y install epel-release
 RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Internet2-repo-0.7-1.noarch.rpm 
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
 
-# initialize pscheduler database
-ENV PGDATA /var/lib/pgsql/9.5/data
-ENV PGUSER postgres
+# -----------------------------------------------------------------------
 
-RUN su postgres -c "/usr/pgsql-9.5/bin/initdb"
-RUN su postgres -c "/usr/pgsql-9.5/bin/pg_ctl start"
-RUN pscheduler internal db-update
-RUN /usr/pgsql-9.5/bin/pg_ctl stop
+# PostgreSQL Setup
+
+# Based on a Dockerfile at
+# https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
+
+# Postgresql version
+ENV PG_VERSION 9.5
+ENV PGVERSION 95
+
+# Set the environment variables
+# TODO: HOME probably needs to go.
+ENV HOME /var/lib/pgsql
+ENV PGDATA /var/lib/pgsql/9.5/data
+
+
+# Working directory
+WORKDIR /var/lib/pgsql
+
+# Initialize the database
+RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
+
+# Copy config file
+COPY postgresql-data/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
+COPY postgresql-data/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
+
+
+# Change own user
+RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
+
+# Volume is set below.
+
+# End PostgreSQL Setup
+
+# -----------------------------------------------------------------------
+
+
+# Initialize pscheduler database.  This needs to happen as one command
+# because each RUN happens in an interim container.
+
+
+RUN    su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60" \
+    && su - root     -c "pscheduler internal db-update" \
+    && su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
+
+
+
+
+
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
@@ -32,4 +75,3 @@ VOLUME ["/var/run", "/var/lib/pgsql"]
 
 
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
-
