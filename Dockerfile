@@ -48,6 +48,14 @@ RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 # -----------------------------------------------------------------------
 
 
+# Hot patch the database loader so it doesn't barf when not
+# interactive.
+
+# TODO: Remove this after pS 4.0.0.3.  Probably harmless if left here.
+
+RUN sed -i -e 's/^\(\$INTERACTIVE.*\)$/\1 || true/g' \
+    /usr/libexec/pscheduler/internals/db-update 
+
 # Initialize pscheduler database.  This needs to happen as one command
 # because each RUN happens in an interim container.
 
