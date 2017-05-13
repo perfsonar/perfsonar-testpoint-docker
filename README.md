@@ -26,10 +26,10 @@ Run the container:
 
 ## Testing
 
-Test the perfSONAR tools from another host with owamp and bwctl installed:
+Test the perfSONAR tools from another host with pscheduler and owamp installed:
 >owping hostname
 
->pscheduler task clock --dest hostname
+>pscheduler task clock --source hostname --dest localhost
 >pscheduler task throughput --dest hostname
 
 ## Notes:
