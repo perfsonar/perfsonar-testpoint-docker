@@ -8,7 +8,7 @@ RUN yum -y install epel-release
 RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Internet2-repo-0.7-1.noarch.rpm 
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
-RUN yum -y install supervisor net-tools sysstat tcsh tcpdump # grab a few other favorite tools
+RUN yum -y install supervisor net-tools sysstat iproute2 tcpdump # grab a few other needed tools
 
 # -----------------------------------------------------------------------
 
@@ -22,12 +22,10 @@ ENV PG_VERSION 9.5
 ENV PGVERSION 95
 
 # Set the environment variables
-# TODO: HOME probably needs to go.
-ENV HOME /var/lib/pgsql
 ENV PGDATA /var/lib/pgsql/9.5/data
 
-
 # Working directory
+# not sure if this is needed?
 WORKDIR /var/lib/pgsql
 
 # Initialize the database
@@ -37,22 +35,17 @@ RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
 COPY postgresql-data/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
 COPY postgresql-data/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 
-
 # Change own user
 RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
-
-# Volume is set below.
 
 # End PostgreSQL Setup
 
 # -----------------------------------------------------------------------
 
-
 # Hot patch the database loader so it doesn't barf when not
 # interactive.
 
 # TODO: Remove this after pS 4.0.0.3.  Probably harmless if left here.
-
 RUN sed -i -e 's/^\(\$INTERACTIVE.*\)$/\1 || true/g' \
     /usr/libexec/pscheduler/internals/db-update 
 
@@ -63,10 +56,6 @@ RUN sed -i -e 's/^\(\$INTERACTIVE.*\)$/\1 || true/g' \
 RUN    su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60" \
     && su - root     -c "pscheduler internal db-update" \
     && su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
-
-
-
-
 
 
 RUN mkdir -p /var/log/supervisor 

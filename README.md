@@ -1,5 +1,7 @@
 ## perfSONAR 4.0 Testpoint docker container
 
+NOTE: This is a work in progress, and does not yet work correctly!!!
+
 The docker container runs all perfSONAR 4.0 Services in the "Testpoint" bundle, as described at:
 http://docs.perfsonar.net/install_options.html
 
@@ -20,18 +22,21 @@ After editing the configuration files, exit the container and commit the change.
 > docker commit -m "added config settings" containerID bltierney/perfsonar4.0-testpoint-docker
 
 Run the container:
->docker run -d -P --net=host -v /var/run bltierney/perfsonar4.0-testpoint-docker
+>docker run -d -P --net=host -v "/var/run,/var/lib/pgsql" bltierney/perfsonar4.0-testpoint-docker
 
 ## Testing
 
 Test the perfSONAR tools from another host with owamp and bwctl installed:
 >owping hostname
 
->bwctl -c hostname
+>pscheduler task clock --dest hostname
+>pscheduler task throughput --dest hostname
 
 ## Notes:
 The perfSONAR hostname/IP is assumed to be the same as the base host. To use a different
 name/IP for the perfSONAR container, see: https://docs.docker.com/articles/networking/
+It also assume the base host is running NTP, and not running httpd, postgres, or anything else 
+listening on the list of ports below.
 
 ## Security:
 make sure the following ports are allowed by the base host:
