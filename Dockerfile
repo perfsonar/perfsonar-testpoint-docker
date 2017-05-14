@@ -12,7 +12,9 @@ RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdu
 
 # -----------------------------------------------------------------------
 
-# PostgreSQL Setup
+#
+# PostgreSQL Server
+#
 
 # Based on a Dockerfile at
 # https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
@@ -24,46 +26,46 @@ ENV PGVERSION 95
 # Set the environment variables
 ENV PGDATA /var/lib/pgsql/9.5/data
 
-# Working directory
-# not sure if this is needed?
-WORKDIR /var/lib/pgsql
-
 # Initialize the database
 RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
 
-# Copy config file
-COPY postgresql-data/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
-COPY postgresql-data/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
+# Overlay the configuration files
+COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
+COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 
 # Change own user
 RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 
 # End PostgreSQL Setup
 
-# -----------------------------------------------------------------------
 
-# Hot patch the database loader so it doesn't barf when not
-# interactive.
+# -----------------------------------------------------------------------------
 
-# TODO: Remove this after pS 4.0.0.3.  Probably harmless if left here.
-RUN sed -i -e 's/^\(\$INTERACTIVE.*\)$/\1 || true/g' \
-    /usr/libexec/pscheduler/internals/db-update 
+#
+# pScheduler Database
+#
 
 # Initialize pscheduler database.  This needs to happen as one command
 # because each RUN happens in an interim container.
 
+COPY postgresql/pscheduler-build-database /tmp
+RUN  /tmp/pscheduler-build-database
+RUN  rm -f /tmp/pscheduler-build-database
 
-RUN    su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60" \
-    && su - root     -c "pscheduler internal db-update" \
-    && su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
 
-# Configure rsyslog
+# -----------------------------------------------------------------------------
+
+# Rsyslog
+
 # Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
 # as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp_bwctl-syslog.conf /etc/rsyslog.d/owamp_bwctl-syslog.conf
+
+
+# -----------------------------------------------------------------------------
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf

@@ -1,0 +1,56 @@
+#!/bin/sh -e
+#
+# Build the pScheduler Database
+#
+
+
+# Start the server
+su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60"
+echo "Server started"
+
+ROLE="pscheduler"
+
+# Generate the password file
+random-string --safe --length 60 --randlength > '/etc/pscheduler/database/database-password'
+echo "Password generated"
+
+# Generate the DSN file
+awk -v "ROLE=${ROLE}" '{ printf "host=127.0.0.1 dbname=pscheduler user=%s password=%s\n", ROLE, $1 }' \
+    "/etc/pscheduler/database/database-password" \
+    > "/etc/pscheduler/database/database-dsn"
+echo "DSN generated"
+
+# Generate a PostgreSQL password file
+# Format is hostname:port:database:username:password
+awk -v "ROLE=${ROLE}" '{ printf "*:*:pscheduler:%s:%s\n", ROLE, $1 }' \
+    "/etc/pscheduler/database/database-password" \
+    > "/etc/pscheduler/database/pgpassfile"
+chmod 400 "/etc/pscheduler/database/pgpassfile"
+echo "Pgpassword generated"
+
+
+# Hot patch the database loader so it doesn't barf when not
+# interactive.
+# TODO: Remove this after pS 4.0.0.3.  Probably harmless if left here.
+sed -i -e 's/^\(\$INTERACTIVE.*\)$/\1 || true/g' \
+    /usr/libexec/pscheduler/internals/db-update 
+echo "Loader patched"
+
+# Build the database
+pscheduler internal db-update
+echo "Database loaded"
+
+# Set the password in the pScheduler database to match what's on the
+# disk.
+( \
+    printf "ALTER ROLE pscheduler WITH UNENCRYPTED PASSWORD '" \
+    && tr -d "\n" < "/etc/pscheduler/database/database-password" \
+    && printf "';\n" \
+) | postgresql-load
+echo "Password set"
+
+# Shut down
+su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
+echo "Server stopped"
+
+exit 0
