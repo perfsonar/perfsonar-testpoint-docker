@@ -48,7 +48,7 @@ RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 # Initialize pscheduler database.  This needs to happen as one command
 # because each RUN happens in an interim container.
 
-COPY postgresql/pscheduler-build-database /tmp
+COPY postgresql/pscheduler-build-database /tmp/pscheduler-build-database
 RUN  /tmp/pscheduler-build-database
 RUN  rm -f /tmp/pscheduler-build-database
 
