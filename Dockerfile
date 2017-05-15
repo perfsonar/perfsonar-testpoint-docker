@@ -8,7 +8,7 @@ RUN yum -y install epel-release
 RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/Internet2-repo-0.7-1.noarch.rpm 
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
-RUN yum -y install supervisor net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools
+RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools
 
 # -----------------------------------------------------------------------
 
@@ -57,6 +57,9 @@ RUN    su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60" \
     && su - root     -c "pscheduler internal db-update" \
     && su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
 
+#config rsyslog
+COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
+COPY rsyslog/owamp_bwctl-syslog.conf /etc/rsyslog.d/owamp_bwctl-syslog.conf
 
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
