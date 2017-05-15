@@ -57,7 +57,11 @@ RUN    su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60" \
     && su - root     -c "pscheduler internal db-update" \
     && su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
 
-#config rsyslog
+# Configure rsyslog
+# Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
+# as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
+COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
+COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp_bwctl-syslog.conf /etc/rsyslog.d/owamp_bwctl-syslog.conf
 
