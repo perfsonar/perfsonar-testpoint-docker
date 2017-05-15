@@ -74,7 +74,7 @@ ADD supervisord.conf /etc/supervisord.conf
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
 
 # need this?
-ENTRYPOINT [ "rsyslogd", "-n" ]
+#ENTRYPOINT [ "rsyslogd", "-n" ]
 
 
 
