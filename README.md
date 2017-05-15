@@ -1,9 +1,10 @@
 ## perfSONAR 4.0 Testpoint docker container
 
-NOTE: This is a work in progress, and does not yet work correctly!!!
+NOTE: This now seems to be working. Testers needed. Please submit problems to:
+
 
 The docker container runs all perfSONAR 4.0 Services in the "Testpoint" bundle, as described at:
-http://docs.perfsonar.net/install_options.html
+https://github.com/perfsonar/perfsonar4.0-testpoint-docker/issues
 
 This can be used to run perfSONAR 4.0 Testpoint services on any OS that supports docker.
 
@@ -22,7 +23,7 @@ After editing the configuration files, exit the container and commit the change.
 > docker commit -m "added config settings" containerID bltierney/perfsonar4.0-testpoint-docker
 
 Run the container:
->docker run -d -P --net=host -v "/var/run,/var/lib/pgsql" bltierney/perfsonar4.0-testpoint-docker
+>docker run -d -P --net=host -v "/var/run" bltierney/perfsonar4.0-testpoint-docker
 
 ## Testing
 
