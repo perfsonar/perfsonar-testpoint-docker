@@ -23,7 +23,7 @@ After editing the configuration files, exit the container and commit the change.
 > docker commit -m "added config settings" containerID perfsonar/testpoint
 
 Run the container:
->docker run -d -P --net=host -v "/var/run" perfsonar/testpoint
+>docker run --privileged -d -P --net=host -v "/var/run" perfsonar/testpoint
 
 ## Testing
 
@@ -36,8 +36,10 @@ Test the perfSONAR tools from another host with pscheduler and owamp installed:
 ## Notes:
 The perfSONAR hostname/IP is assumed to be the same as the base host. To use a different
 name/IP for the perfSONAR container, see: https://docs.docker.com/articles/networking/
-It also assume the base host is running NTP, and not running httpd, postgres, or anything else 
-listening on the list of ports below.
+It also assumes the base host is running NTP, and not running httpd, postgres, or anything else 
+listening on the list of ports below. If bwctl gives you the error: "bwctl: SessionRequest: Denied by Hostname",
+that likely means the clock is not synced well enough. You can uncomment the line 'allow_unsync' in
+/etc/bwctl-server/bwctl-server.conf to get around this.
 
 ## Security:
 make sure the following ports are allowed by the base host:
