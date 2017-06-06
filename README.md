@@ -4,7 +4,7 @@ NOTE: This now seems to be working. Testers needed. Please submit problems to:
   https://github.com/perfsonar/perfsonar-testpoint-docker/issues
 
 The docker container runs all perfSONAR 4.x Services in the "Testpoint" bundle, as described at:
-https://github.com/perfsonar/perfsonar-testpoint-docker/issues
+http://docs.perfsonar.net/install_options.html
 
 This can be used to run perfSONAR 4.x Testpoint services on any OS that supports docker.
 
@@ -32,6 +32,12 @@ Test the perfSONAR tools from another host with pscheduler and owamp installed:
 
 >pscheduler task clock --source hostname --dest localhost
 >pscheduler task throughput --dest hostname
+
+## Troubleshooting
+
+To get a shell in the Docker container on your host, run 'docker ps -a' to get your container ID, 
+and then run:
+>docker exec -it containerID bash
 
 ## Notes:
 The perfSONAR hostname/IP is assumed to be the same as the base host. To use a different
