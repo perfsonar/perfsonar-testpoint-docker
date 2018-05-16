@@ -59,7 +59,7 @@ RUN  rm -f /tmp/pscheduler-build-database
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
-COPY rsyslog/owamp_bwctl-syslog.conf /etc/rsyslog.d/owamp_bwctl-syslog.conf
+COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 
 # -----------------------------------------------------------------------------
@@ -69,7 +69,6 @@ ADD supervisord.conf /etc/supervisord.conf
 
 # The following ports are used:
 # pScheduler: 443
-# bwctl:4823, 5001-5900, 6001-6200
 # owamp:861, 8760-9960
 # ranges not supported in docker, so need to use docker run -P to expose all ports
 

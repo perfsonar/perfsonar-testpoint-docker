@@ -43,13 +43,11 @@ and then run:
 The perfSONAR hostname/IP is assumed to be the same as the base host. To use a different
 name/IP for the perfSONAR container, see: https://docs.docker.com/articles/networking/
 It also assumes the base host is running NTP, and not running httpd, postgres, or anything else 
-listening on the list of ports below. If bwctl gives you the error: "bwctl: SessionRequest: Denied by Hostname",
-that likely means the clock is not synced well enough. You can uncomment the line 'allow_unsync' in
-/etc/bwctl-server/bwctl-server.conf to get around this.
+listening on the list of ports below.
 
 ## Security:
 make sure the following ports are allowed by the base host:
- pScheduler: 443, bwctl:4823, 5001-5900, 6001-6200 ; owamp:861, 8760-9960
+ pScheduler: 443 ; owamp:861, 8760-9960
 See: http://www.perfsonar.net/deploy/security-considerations/
 
 
