@@ -1,7 +1,7 @@
 # perfSONAR Testpoint
 
 FROM centos:centos7
-MAINTAINER Brian Tierney <bltierney@es.net>
+MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 
 RUN yum -y install epel-release
