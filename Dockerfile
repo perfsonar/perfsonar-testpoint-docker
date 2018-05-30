@@ -5,7 +5,7 @@ MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 
 RUN yum -y install epel-release
-RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/perfSONAR-repo-0.8-1.noarch.rpm 
+RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/perfSONAR-repo-0.8-1.noarch.rpm
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools
@@ -54,7 +54,7 @@ RUN  rm -f /tmp/pscheduler-build-database
 # -----------------------------------------------------------------------------
 
 # Rsyslog
-# Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
+# Note: need to modify default CentOS7 rsyslog configuration to work with Docker,
 # as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
@@ -64,7 +64,7 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 # -----------------------------------------------------------------------------
 
-RUN mkdir -p /var/log/supervisor 
+RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisord.conf
 
 # The following ports are used:
