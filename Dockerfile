@@ -3,7 +3,6 @@
 FROM centos:centos7
 MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
-
 RUN yum -y install \
     # epel-release repo
     epel-release \
@@ -18,39 +17,29 @@ RUN yum -y install \
     rsyslog && \
     # clean up
     yum clean all && \
-    # make folders for logging
-    mkdir -p /var/log/supervisor
-
-# -----------------------------------------------------------------------
+    rm -rf /var/cache/yum/* && \
 
 #
 # PostgreSQL Server
 #
-
 # shouldn't be necessary but isn't added to path via rpm
 ENV PATH="/usr/pgsql-9.5/bin:${PATH}"
-
 # Initialize the database
 RUN su postgres -c 'pg_ctl init -D /var/lib/pgsql/9.5/data'
-
 # Overlay the configuration files
-COPY --chown=postgres:postgres ["postgresql/postgresql.conf", "postgresql/pg_hba.conf", "/var/lib/pgsql/9.5/data/"]
-
-# End PostgreSQL Setup
-
-
-# -----------------------------------------------------------------------------
+COPY --chown=postgres:postgres [ \
+    "postgresql/postgresql.conf", \
+    "postgresql/pg_hba.conf", \
+    "/var/lib/pgsql/9.5/data/"]
 
 #
 # pScheduler Database
 #
-# Initialize pscheduler database.  This needs to happen as one command
-# because each RUN happens in an interim container.
-
-# Start the server
+# Initialize pscheduler database
 RUN su postgres -c "pg_ctl start -w -t 60" && \
     # Generate the password file
-    random-string --safe --length 60 > '/etc/pscheduler/database/database-password' && \
+    random-string --safe --length 60 > \
+    '/etc/pscheduler/database/database-password' && \
     # Generate the DSN file
     printf "host=127.0.0.1 dbname=pscheduler user=pscheduler password=%s\n" \
     cat /etc/pscheduler/database/database-password \
@@ -73,40 +62,39 @@ RUN su postgres -c "pg_ctl start -w -t 60" && \
     # Shut down
     su postgres -c "pg_ctl stop  -w -t 60"
 
-
-# -----------------------------------------------------------------------------
-
 # Rsyslog
-# Note: need to modify default CentOS7 rsyslog configuration to work with Docker,
-# as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
-COPY ["rsyslog/listen.conf", "rsyslog/python-pscheduler.conf", "rsyslog/owamp-syslog.conf", "/etc/rsyslog.d/"]
+COPY ["rsyslog/listen.conf", \
+      "rsyslog/python-pscheduler.conf", \
+      "rsyslog/owamp-syslog.conf", \
+      "/etc/rsyslog.d/"]
 
-# -----------------------------------------------------------------------------
-
+# Supervisor
+RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisord.conf
 
+#
 # Expose the proper ports for the perfSONAR tools
-
+#
 # owamp
 EXPOSE 861
 EXPOSE 8760-9960/udp
 # pscheduler
 EXPOSE 443
-# # iperf3
+# iperf3
 EXPOSE 5201
-# # iperf2
+# iperf2
 EXPOSE 5001
-# # nuttcp
+# nuttcp
 EXPOSE 5000
 EXPOSE 5101
-# # traceroute
+# traceroute
 EXPOSE 33434-33634/udp
-# # simplestream
+# simplestream
 EXPOSE 5890-5900
-# # ntp
+# ntp
 EXPOSE 123/udp
-# # bwctl
+# bwctl
 EXPOSE 4823
 EXPOSE 5001-5900
 EXPOSE 6001-6200
