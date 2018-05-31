@@ -17,7 +17,7 @@ RUN yum -y install \
     rsyslog && \
     # clean up
     yum clean all && \
-    rm -rf /var/cache/yum/* && \
+    rm -rf /var/cache/yum/*
 
 #
 # PostgreSQL Server
@@ -25,7 +25,7 @@ RUN yum -y install \
 # shouldn't be necessary but isn't added to path via rpm
 ENV PATH="/usr/pgsql-9.5/bin:${PATH}"
 # Initialize the database
-RUN su postgres -c 'pg_ctl init -D /var/lib/pgsql/9.5/data'
+RUN su postgres -c 'pg_ctl init'
 # Overlay the configuration files
 COPY --chown=postgres:postgres [ \
     "postgresql/postgresql.conf", \
@@ -38,8 +38,8 @@ COPY --chown=postgres:postgres [ \
 # Initialize pscheduler database
 RUN su postgres -c "pg_ctl start -w -t 60" && \
     # Generate the password file
-    random-string --safe --length 60 > \
-    '/etc/pscheduler/database/database-password' && \
+    random-string --safe --length 60 \
+    > '/etc/pscheduler/database/database-password' && \
     # Generate the DSN file
     printf "host=127.0.0.1 dbname=pscheduler user=pscheduler password=%s\n" \
     cat /etc/pscheduler/database/database-password \
