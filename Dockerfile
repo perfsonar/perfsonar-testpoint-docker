@@ -24,6 +24,9 @@ RUN yum -y install \
 #
 # shouldn't be necessary but isn't added to path via rpm
 ENV PATH="/usr/pgsql-9.5/bin:${PATH}"
+# declare database location
+ENV PGDATA="/var/lib/pgsql/9.5/data/"
+
 # Initialize the database
 RUN su postgres -c 'pg_ctl init'
 # Overlay the configuration files
