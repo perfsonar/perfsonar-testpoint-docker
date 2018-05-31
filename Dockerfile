@@ -36,9 +36,31 @@ COPY --chown=postgres:postgres ["postgresql/postgresql.conf", "postgresql/pg_hba
 # Initialize pscheduler database.  This needs to happen as one command
 # because each RUN happens in an interim container.
 
-COPY postgresql/pscheduler-build-database /tmp/pscheduler-build-database
-RUN  /tmp/pscheduler-build-database
-RUN  rm -f /tmp/pscheduler-build-database
+# Start the server
+RUN su postgres -c "pg_ctl start -w -t 60" && \
+    # Generate the password file
+    random-string --safe --length 60 > '/etc/pscheduler/database/database-password' && \
+    # Generate the DSN file
+    printf "host=127.0.0.1 dbname=pscheduler user=pscheduler password=%s\n" \
+    cat /etc/pscheduler/database/database-password \
+    > /etc/pscheduler/database/database-dsn && \
+    # Generate a PostgreSQL password file
+    # Format is hostname:port:database:username:password
+    printf "*:*:pscheduler:pscheduler:%s\n" \
+    cat /etc/pscheduler/database/database-password \
+    > "/etc/pscheduler/database/pgpassfile" && \
+    chmod 400 /etc/pscheduler/database/pgpassfile && \
+    # Build the database
+    pscheduler internal db-update && \
+    # Set the password in the pScheduler database to match what's on the
+    # disk.
+    ( \
+        printf "ALTER ROLE pscheduler WITH UNENCRYPTED PASSWORD '" \
+        && tr -d "\n" < "/etc/pscheduler/database/database-password" \
+        && printf "';\n" \
+    ) | postgresql-load && \
+    # Shut down
+    su postgres -c "pg_ctl stop  -w -t 60"
 
 
 # -----------------------------------------------------------------------------
