@@ -15,25 +15,15 @@ RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdu
 #
 # PostgreSQL Server
 #
-# Based on a Dockerfile at
-# https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
-# Postgresql version
-ENV PG_VERSION 9.5
-ENV PGVERSION 95
-
-# Set the environment variables
-ENV PGDATA /var/lib/pgsql/9.5/data
+# shouldn't be necessary but isn't added to path via rpm
+ENV PATH="/usr/pgsql-9.5/bin:${PATH}"
 
 # Initialize the database
-RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
+RUN su postgres -c 'pg_ctl init -D /var/lib/pgsql/9.5/data'
 
 # Overlay the configuration files
-COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
-COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
-
-# Change own user
-RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
+COPY --chown=postgres:postgres ["postgresql/postgresql.conf", "postgresql/pg_hba.conf", "/var/lib/pgsql/9.5/data/"]
 
 # End PostgreSQL Setup
 
