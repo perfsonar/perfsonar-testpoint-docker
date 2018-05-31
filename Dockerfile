@@ -14,7 +14,7 @@ RUN yum -y install \
     # install testpoint bundle and required tools for docker image
     yum -y install \
     perfsonar-testpoint \
-    supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools && \
+    supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump && \
     # clean up
     yum clean all && \
     # make folders for logging
