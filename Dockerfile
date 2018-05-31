@@ -94,12 +94,6 @@ EXPOSE 33434-33634/udp
 EXPOSE 5890-5900
 # ntp
 EXPOSE 123/udp
-# bwctl
-EXPOSE 4823
-EXPOSE 5001-5900
-EXPOSE 6001-6200
-EXPOSE 5001-5900/udp
-EXPOSE 6001-6200/udp
 
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
