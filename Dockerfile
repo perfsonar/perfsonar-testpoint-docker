@@ -69,15 +69,12 @@ RUN su postgres -c "pg_ctl start -w -t 60" && \
 # Note: need to modify default CentOS7 rsyslog configuration to work with Docker,
 # as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
-COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
-COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
-COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
-
+COPY ["rsyslog/listen.conf", "rsyslog/python-pscheduler.conf", "rsyslog/owamp-syslog.conf", "/etc/rsyslog.d/"]
 
 # -----------------------------------------------------------------------------
 
 RUN mkdir -p /var/log/supervisor
-ADD supervisord.conf /etc/supervisord.conf
+COPY supervisord.conf /etc/supervisord.conf
 
 # The following ports are used:
 # pScheduler: 443
