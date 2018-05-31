@@ -4,12 +4,21 @@ FROM centos:centos7
 MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 
-RUN yum install epel-release \
+RUN yum -y install \
+    # epel-release repo
+    epel-release \
+    # perfSONAR release repo
     http://software.internet2.edu/rpms/el7/x86_64/main/RPMS/perfSONAR-repo-0.8-1.noarch.rpm && \
+    # reload the cache for the new repos
     yum clean expire-cache && \
-    yum -y install perfsonar-testpoint && \
-    yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools &&\
-    yum clean all
+    # install testpoint bundle and required tools for docker image
+    yum -y install \
+    perfsonar-testpoint \
+    supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools && \
+    # clean up
+    yum clean all && \
+    # make folders for logging
+    mkdir -p /var/log/supervisor
 
 # -----------------------------------------------------------------------
 
@@ -74,7 +83,6 @@ COPY ["rsyslog/listen.conf", "rsyslog/python-pscheduler.conf", "rsyslog/owamp-sy
 
 # -----------------------------------------------------------------------------
 
-RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisord.conf
 
 # Expose the proper ports for the perfSONAR tools
