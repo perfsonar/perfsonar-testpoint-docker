@@ -76,10 +76,32 @@ COPY ["rsyslog/listen.conf", "rsyslog/python-pscheduler.conf", "rsyslog/owamp-sy
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisord.conf
 
-# The following ports are used:
-# pScheduler: 443
-# owamp:861, 8760-9960
-# ranges not supported in docker, so need to use docker run -P to expose all ports
+# Expose the proper ports for the perfSONAR tools
+
+# owamp
+EXPOSE 861
+EXPOSE 8760-9960/udp
+# pscheduler
+EXPOSE 443
+# # iperf3
+EXPOSE 5201
+# # iperf2
+EXPOSE 5001
+# # nuttcp
+EXPOSE 5000
+EXPOSE 5101
+# # traceroute
+EXPOSE 33434-33634/udp
+# # simplestream
+EXPOSE 5890-5900
+# # ntp
+EXPOSE 123/udp
+# # bwctl
+EXPOSE 4823
+EXPOSE 5001-5900
+EXPOSE 6001-6200
+EXPOSE 5001-5900/udp
+EXPOSE 6001-6200/udp
 
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
