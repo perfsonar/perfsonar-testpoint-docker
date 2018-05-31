@@ -30,10 +30,10 @@ ENV PGDATA="/var/lib/pgsql/9.5/data/"
 # Initialize the database
 RUN su postgres -c 'pg_ctl init'
 # Overlay the configuration files
-COPY --chown=postgres:postgres [ \
-    "postgresql/postgresql.conf", \
-    "postgresql/pg_hba.conf", \
-    "/var/lib/pgsql/9.5/data/"]
+COPY ["postgresql/postgresql.conf", \
+      "postgresql/pg_hba.conf", \
+      "/var/lib/pgsql/9.5/data/"]
+RUN chown -R postgres:postgres $PGDATA
 
 #
 # pScheduler Database
