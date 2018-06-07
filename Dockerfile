@@ -73,6 +73,6 @@ ADD supervisord.conf /etc/supervisord.conf
 # ranges not supported in docker, so need to use docker run -P to expose all ports
 
 # add pid directory, logging, and postgres directory
-VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
+VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d", "/etc/perfsonar" ]
 
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
