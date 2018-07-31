@@ -45,12 +45,12 @@ RUN su postgres -c "pg_ctl start -w -t 60" && \
     > '/etc/pscheduler/database/database-password' && \
     # Generate the DSN file
     printf "host=127.0.0.1 dbname=pscheduler user=pscheduler password=%s\n" \
-    cat /etc/pscheduler/database/database-password \
+    $(cat /etc/pscheduler/database/database-password) \
     > /etc/pscheduler/database/database-dsn && \
     # Generate a PostgreSQL password file
     # Format is hostname:port:database:username:password
     printf "*:*:pscheduler:pscheduler:%s\n" \
-    cat /etc/pscheduler/database/database-password \
+    $(cat /etc/pscheduler/database/database-password) \
     > "/etc/pscheduler/database/pgpassfile" && \
     chmod 400 /etc/pscheduler/database/pgpassfile && \
     # Build the database
