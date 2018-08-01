@@ -14,6 +14,11 @@ RUN yum -y install \
     yum -y install \
     perfsonar-testpoint \
     supervisor \
+    net-tools \
+    sysstat \
+    iproute \
+    bind-utils \
+    tcpdump
     rsyslog && \
     # clean up
     yum clean all && \
