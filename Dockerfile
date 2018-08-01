@@ -73,7 +73,6 @@ COPY ["rsyslog/listen.conf", \
       "/etc/rsyslog.d/"]
 
 # Supervisor
-RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisord.conf
 
 #
