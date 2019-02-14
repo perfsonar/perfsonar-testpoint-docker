@@ -5,7 +5,7 @@ MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 
 RUN yum -y install epel-release
-RUN yum -y install https://perfsonar-dev3.grnoc.iu.edu/nightly/el/7/x86_64/perfsonar/4.1.6/packages/perfSONAR-repo-nightly-patch-0.9-1.48.792280914bcd9579d1b19b7a0c219e713219f824.noarch.rpm 
+RUN yum -y install https://perfsonar-dev3.grnoc.iu.edu/nightly/el/7/x86_64/perfsonar/4.1.6/packages/perfSONAR-repo-nightly-minor-0.9-1.48.792280914bcd9579d1b19b7a0c219e713219f824.noarch.rpm 
 RUN yum -y update; yum clean all
 RUN yum -y install perfsonar-testpoint
 RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools
