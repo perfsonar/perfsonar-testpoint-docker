@@ -23,7 +23,7 @@ After editing the configuration files, exit the container and commit the change.
 > docker commit -m "added config settings" containerID perfsonar/testpoint
 
 Run the container:
->docker run --privileged -d -P --net=host -v "/var/run" perfsonar/testpoint
+>docker run --privileged -d -P --net=host perfsonar/testpoint
 
 ## Testing
 
