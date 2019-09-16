@@ -78,7 +78,7 @@ ADD supervisord.conf /etc/supervisord.conf
 # The following ports are used:
 # pScheduler: 443
 # owamp:861, 8760-9960
-# ranges not supported in docker, so need to use docker run -P to expose all ports
+EXPOSE 443 861 8760-9960
 
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
