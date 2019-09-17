@@ -3,12 +3,20 @@
 FROM centos:centos7
 MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
-
-RUN yum -y install epel-release
-RUN yum -y install http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.9-1.noarch.rpm 
-RUN yum -y update; yum clean all
-RUN yum -y install perfsonar-testpoint
-RUN yum -y install supervisor rsyslog net-tools sysstat iproute bind-utils tcpdump # grab a few other needed tools
+RUN yum -y install \
+    epel-release \
+    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.9-1.noarch.rpm \
+    && yum -y install \
+    supervisor \
+    rsyslog \
+    net-tools \
+    sysstat \
+    iproute \
+    bind-utils \
+    tcpdump \
+    perfsonar-testpoint \
+    && yum clean all \
+    && rm -rf /var/cache/yum
 
 # -----------------------------------------------------------------------
 
@@ -47,8 +55,8 @@ RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 # because each RUN happens in an interim container.
 
 COPY postgresql/pscheduler-build-database /tmp/pscheduler-build-database
-RUN  /tmp/pscheduler-build-database
-RUN  rm -f /tmp/pscheduler-build-database
+RUN  /tmp/pscheduler-build-database && \
+    rm -f /tmp/pscheduler-build-database
 
 
 # -----------------------------------------------------------------------------
@@ -70,7 +78,7 @@ ADD supervisord.conf /etc/supervisord.conf
 # The following ports are used:
 # pScheduler: 443
 # owamp:861, 8760-9960
-# ranges not supported in docker, so need to use docker run -P to expose all ports
+EXPOSE 443 861 8760-9960
 
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
