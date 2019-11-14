@@ -1,13 +1,12 @@
 # perfSONAR Testpoint
 
-FROM centos:centos7
+FROM danielneto/systemd:centos7
 MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 RUN yum -y install \
     epel-release \
     http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.9-1.noarch.rpm \
     && yum -y install \
-    supervisor \
     rsyslog \
     net-tools \
     sysstat \
@@ -86,6 +85,4 @@ ADD supervisord.conf /etc/supervisord.conf
 EXPOSE 443 861 862 5000-5001 5101 5201 8760-9960 18760-19960
 
 # add pid directory, logging, and postgres directory
-VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
-
-CMD /usr/bin/supervisord -c /etc/supervisord.conf
+VOLUME ["/var/lib/pgsql", "/var/log" ]
