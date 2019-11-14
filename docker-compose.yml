@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  testpoint:
+    build:
+      context: ./
+    cap_add:
+      - SYS_PTRACE
+    environment: 
+      - container=docker
+      - TZ=UTC
+    network_mode: "host"
+    tmpfs: 
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tty: true
