@@ -25,6 +25,9 @@ After editing the configuration files, exit the container and commit the change.
 Run the container:
 >docker run -d --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add SYS_PTRACE --net=host perfsonar/testpoint
 
+Run the container using [docker-compose](https://docs.docker.com/compose/):
+>docker-compose up -d testpoint
+
 ## Testing
 
 Test the perfSONAR tools from another host with pscheduler and owamp installed:
