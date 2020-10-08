@@ -27,14 +27,14 @@ RUN yum -y install \
 # https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
 # Postgresql version
-ENV PG_VERSION 9.5
-ENV PGVERSION 95
+ENV PG_VERSION 10
+ENV PGVERSION 10
 
 # Set the environment variables
-ENV PGDATA /var/lib/pgsql/9.5/data
+ENV PGDATA /var/lib/pgsql/10/data
 
 # Initialize the database
-RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
+RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl init"
 
 # Overlay the configuration files
 COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
