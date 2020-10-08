@@ -5,7 +5,7 @@
 
 
 # Start the server
-su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60"
+su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60"
 echo "Server started"
 
 ROLE="pscheduler"
@@ -50,7 +50,7 @@ echo "Database loaded"
 echo "Password set"
 
 # Shut down
-su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
+su - postgres -c "/usr/pgsql-10/bin/pg_ctl stop  -w -t 60"
 echo "Server stopped"
 
 exit 0
