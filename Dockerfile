@@ -1,7 +1,6 @@
 # perfSONAR Testpoint
 
 FROM centos:centos7
-MAINTAINER perfSONAR <perfsonar-user@perfsonar.net>
 
 RUN yum -y install \
     epel-release \
@@ -14,9 +13,7 @@ RUN yum -y install \
     iproute \
     bind-utils \
     tcpdump \
-    perfsonar-testpoint \
-    && yum clean all \
-    && rm -rf /var/cache/yum
+    postgresql10-server
 
 # -----------------------------------------------------------------------
 
@@ -43,21 +40,13 @@ COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 # Change own user
 RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 
+#Start postgresql
+RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
+    && yum install -y perfsonar-testpoint \
+    && yum clean all \
+    && rm -rf /var/cache/yum
+
 # End PostgreSQL Setup
-
-
-# -----------------------------------------------------------------------------
-
-#
-# pScheduler Database
-#
-# Initialize pscheduler database.  This needs to happen as one command
-# because each RUN happens in an interim container.
-
-COPY postgresql/pscheduler-build-database /tmp/pscheduler-build-database
-RUN  /tmp/pscheduler-build-database && \
-    rm -f /tmp/pscheduler-build-database
-
 
 # -----------------------------------------------------------------------------
 
