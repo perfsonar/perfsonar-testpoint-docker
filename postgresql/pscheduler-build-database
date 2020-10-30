@@ -5,7 +5,7 @@
 
 
 # Start the server
-su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl start -w -t 60"
+su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60"
 echo "Server started"
 
 ROLE="pscheduler"
@@ -43,14 +43,14 @@ echo "Database loaded"
 # Set the password in the pScheduler database to match what's on the
 # disk.
 ( \
-    printf "ALTER ROLE pscheduler WITH UNENCRYPTED PASSWORD '" \
+    printf "ALTER ROLE pscheduler WITH PASSWORD '" \
     && tr -d "\n" < "/etc/pscheduler/database/database-password" \
     && printf "';\n" \
 ) | postgresql-load
 echo "Password set"
 
 # Shut down
-su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl stop  -w -t 60"
+su - postgres -c "/usr/pgsql-10/bin/pg_ctl stop  -w -t 60"
 echo "Server stopped"
 
 exit 0

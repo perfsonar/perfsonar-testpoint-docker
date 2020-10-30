@@ -1,0 +1,80 @@
+#!/bin/bash -e
+
+###############################################################################
+# NAME: psdocker 
+# 
+# USAGE: psdocker [[start|stop|status] tag]
+# 
+# DESCIPTION: 
+# A script to easily start and stop the perfsonar/testpoint container, 
+# especially on Mac OS X where the container does not always behave as 
+# expected with default settings. If given no parameters this script will start
+# the latest testpoint bundle and login with a bash shell. If the container is
+# already running it will just login. The stop command can be used to stop the
+# container and status to obtain the containr ID (if running). It takes and
+# optional "tag" to get other versions of the docker container. See the 
+# following URL for a list of valid tags: 
+#    * https://hub.docker.com/r/perfsonar/testpoint/tags
+#
+###############################################################################
+
+#get action of start (default), stop or status
+action=$1
+if [ -z "$action" ]; then
+   action="start"
+fi
+#get tag or default to latest
+tag=$2
+if [ -z "$tag" ]; then
+   tag="latest"
+fi
+#set bundle
+bundle="testpoint:${tag}"
+
+#Set docker hostname
+hostname="perfsonar-docker"
+
+if [ "$action" == "start" ]; then
+   #check for container and start if not running
+   container_id=$(docker ps | grep "$bundle" | awk '{print $1}')
+   if [ -z "$container_id" ]; then
+      echo "Setting-up new container..."
+      docker pull perfsonar/${bundle}
+      docker run -h $hostname -d --net=host perfsonar/${bundle}
+      container_id=$(docker ps | grep "$bundle" | awk '{print $1}')
+      sleep 3
+      ip_address=$(docker exec -it $container_id ifconfig eth0 | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+      docker exec -it $container_id bash -c "echo \"$ip_address $hostname\" >> /etc/hosts"
+   else
+      echo "Using existing container $container_id"
+   fi
+   docker exec -it $container_id bash
+elif [ "$action" == "stop" ]; then
+   container_id=$(docker ps | grep "$bundle" | awk '{print $1}')
+   if [ -z "$container_id" ]; then
+      >&2 echo "Unable to find container running perfsonar/${bundle}"
+      exit 1
+   fi
+   docker stop $container_id
+   docker rm $container_id 
+elif [ "$action" == "status" ]; then
+   container_id=$(docker ps | grep "$bundle" | awk '{print $1}')
+   if [ -z "$container_id" ]; then
+      >&2 echo "Unable to find container running perfsonar/${bundle}"
+      exit 1
+   else
+      echo "Container running with id $container_id"
+      exit 0
+   fi
+else
+   echo ""
+   echo "Usage: $0 [[start|stop|status] [tag]]"
+   echo ""
+   if [ "$action" == "help" ] || [ "$action" == "--help" ] || [ "$action" == "-h" ]; then
+      exit 0
+   else
+      >&2 echo "Unknown action $action"
+      echo ""
+      exit 1
+   fi
+fi
