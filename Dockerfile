@@ -5,7 +5,7 @@ LABEL maintainer="perfSONAR <perfsonar-user@perfsonar.net>"
 
 RUN yum -y install \
     epel-release \
-    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.9-1.noarch.rpm \
+    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.10-1.noarch.rpm \
     && yum -y install \
     rsyslog \
     net-tools \
@@ -13,9 +13,7 @@ RUN yum -y install \
     iproute \
     bind-utils \
     tcpdump \
-    perfsonar-testpoint \
-    && yum clean all \
-    && rm -rf /var/cache/yum
+    postgresql10-server
 
 # -----------------------------------------------------------------------
 
@@ -26,14 +24,14 @@ RUN yum -y install \
 # https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
 # Postgresql version
-ENV PG_VERSION 9.5
-ENV PGVERSION 95
+ENV PG_VERSION 10
+ENV PGVERSION 10
 
 # Set the environment variables
-ENV PGDATA /var/lib/pgsql/9.5/data
+ENV PGDATA /var/lib/pgsql/10/data
 
 # Initialize the database
-RUN su - postgres -c "/usr/pgsql-9.5/bin/pg_ctl init"
+RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl init"
 
 # Overlay the configuration files
 COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
@@ -42,21 +40,13 @@ COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 # Change own user
 RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 
+#Start postgresql
+RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
+    && yum install -y perfsonar-testpoint \
+    && yum clean all \
+    && rm -rf /var/cache/yum
+
 # End PostgreSQL Setup
-
-
-# -----------------------------------------------------------------------------
-
-#
-# pScheduler Database
-#
-# Initialize pscheduler database.  This needs to happen as one command
-# because each RUN happens in an interim container.
-
-COPY postgresql/pscheduler-build-database /tmp/pscheduler-build-database
-RUN  /tmp/pscheduler-build-database && \
-    rm -f /tmp/pscheduler-build-database
-
 
 # -----------------------------------------------------------------------------
 
