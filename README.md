@@ -25,6 +25,18 @@ After editing the configuration files, exit the container and commit the change.
 Run the container:
 >docker run --privileged -d --net=host perfsonar/testpoint
 
+### Systemd based container (optional)
+
+Besides the default version based on supervisord, there is also a testpoint container based on systemd.
+
+To run this version:
+>docker pull perfsonar/testpoint:systemd  
+>docker run -d --net=host --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro perfsonar/testpoint:systemd
+
+Or, build and run it using [docker-compose](https://docs.docker.com/compose/):
+>docker-compose -f docker-compose.systemd.yml build  
+>docker-compose -f docker-compose.systemd.yml up -d  
+
 ## Testing
 
 Test the perfSONAR tools from another host with pscheduler and owamp installed:

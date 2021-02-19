@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  testpoint:
+    build:
+      context: .
+      dockerfile: systemd/Dockerfile
+    environment: 
+      - container=docker
+      - TZ=UTC
+    network_mode: "host"
+    restart: on-failure
+    tmpfs: 
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tty: true
