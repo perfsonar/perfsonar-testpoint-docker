@@ -6,3 +6,5 @@ services:
     restart: on-failure
     volumes:
        - ./compose/psconfig:/etc/perfsonar/psconfig
+       - ./compose/lsregistrationdaemon.conf:/etc/perfsonar/lsregistrationdaemon.conf
+       - ./compose/limits.conf:/etc/pscheduler/limits.conf
