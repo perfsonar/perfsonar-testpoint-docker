@@ -14,4 +14,8 @@ services:
       - /tmp
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./compose/psconfig/pscheduler-agent.json:/etc/perfsonar/psconfig/pscheduler-agent.json
+      - ./compose/psconfig/pscheduler-agent-logger.conf:/etc/perfsonar/psconfig/pscheduler-agent-logger.conf
+      - ./compose/lsregistrationdaemon.conf:/etc/perfsonar/lsregistrationdaemon.conf
+      - ./compose/limits.conf:/etc/pscheduler/limits.conf
     tty: true
