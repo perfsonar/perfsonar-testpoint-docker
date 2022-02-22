@@ -62,7 +62,7 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 # -----------------------------------------------------------------------------
 
 RUN mkdir -p /var/log/supervisor 
-ADD supervisord.conf /etc/supervisord.conf
+COPY supervisord.conf /etc/supervisord.conf
 
 # The following ports are used:
 # pScheduler: 443
