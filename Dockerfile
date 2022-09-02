@@ -58,10 +58,6 @@ COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
-# Tighten up memcached
-COPY scripts/ /tmp/ps-setup-scripts
-RUN chmod 755 /tmp/ps-setup-scripts/configure_memcached_security && bash /tmp/ps-setup-scripts/configure_memcached_security && rm -rf /tmp/ps-setup-scripts
-
 # -----------------------------------------------------------------------------
 
 RUN mkdir -p /var/log/supervisor 
