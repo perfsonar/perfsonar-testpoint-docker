@@ -42,7 +42,7 @@ RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
 
 #Start postgresql
 RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
-    && yum install -y perfsonar-testpoint \
+    && yum install -y perfsonar-testpoint perfsonar-toolkit-security \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -58,6 +58,9 @@ COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
+# Tighten up memcached
+COPY scripts/ /tmp/ps-setup-scripts
+RUN chmod 755 /tmp/ps-setup-scripts/configure_memcached_security && bash /tmp/ps-setup-scripts/configure_memcached_security && rm -rf /tmp/ps-setup-scripts
 
 # -----------------------------------------------------------------------------
 
