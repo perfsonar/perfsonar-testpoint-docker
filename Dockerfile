@@ -30,6 +30,9 @@ ENV PGVERSION 10
 # Set the environment variables
 ENV PGDATA /var/lib/pgsql/10/data
 
+# Create run directory (using /run for Kaniko build)
+RUN install -dv --mode=775 --owner=postgres --group=postgres /var/run/postgresql /run/postgresql
+
 # Initialize the database
 RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl init"
 
