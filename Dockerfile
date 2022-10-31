@@ -64,6 +64,9 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 # -----------------------------------------------------------------------------
 
+# Create httpd run directory for httpd (using /run for Kaniko build on GitLab runner)
+RUN install -dv /run/httpd
+
 RUN mkdir -p /var/log/supervisor 
 ADD supervisord.conf /etc/supervisord.conf
 
