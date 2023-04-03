@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   testpoint:
+    image: perfsonar/testpoint:v4.4.4-systemd
     build:
       context: .
       dockerfile: systemd/Dockerfile
