@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   testpoint:
-    image: perfsonar/testpoint:latest
+    image: perfsonar/testpoint:staging
     build:
       context: .
       dockerfile: Dockerfile
