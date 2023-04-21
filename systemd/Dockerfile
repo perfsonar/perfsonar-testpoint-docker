@@ -26,7 +26,7 @@ RUN systemctl mask dev-hugepages.mount sys-fs-fuse-connections.mount
 
 RUN yum -y install \
     epel-release \
-    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-staging-0.10-1.noarch.rpm \
+    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfsonar-repo-staging-0.11-1.noarch.rpm \
     && yum -y install \
     rsyslog \
     net-tools \
