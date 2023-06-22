@@ -1,6 +1,6 @@
 # perfSONAR Testpoint
 
-FROM centos:7
+FROM rockylinux/rockylinux:8
 
 # -----------------------------------------------------------------------
 ## Commands required to run systemd 
@@ -24,17 +24,18 @@ RUN systemctl mask dev-hugepages.mount sys-fs-fuse-connections.mount
 
 # -----------------------------------------------------------------------
 
-RUN yum -y install \
+RUN dnf -y install \
     epel-release \
-    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfsonar-repo-0.11-1.noarch.rpm \
-    && yum -y install \
+    http://software.internet2.edu/rpms/el8/x86_64/latest/packages/perfsonar-repo-0.11-1.noarch.rpm \
+    && dnf config-manager --set-enabled powertools \
+    && dnf -y install \
     rsyslog \
     net-tools \
     sysstat \
     iproute \
     bind-utils \
     tcpdump \
-    postgresql10-server
+    postgresql-server
 
 # -----------------------------------------------------------------------
 
@@ -44,27 +45,23 @@ RUN yum -y install \
 # Based on a Dockerfile at
 # https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
-# Postgresql version
-ENV PG_VERSION 10
-ENV PGVERSION 10
-
 # Set the environment variables
-ENV PGDATA /var/lib/pgsql/10/data
+ENV PGDATA /var/lib/pgsql/data
 
 # Initialize the database
-RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl init"
+RUN su - postgres -c "/usr/bin/pg_ctl init"
 
 # Overlay the configuration files
-COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
-COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
+COPY postgresql/postgresql.conf /var/lib/pgsql/data/postgresql.conf
+COPY postgresql/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 
 # Change own user
-RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
+RUN chown -R postgres:postgres /var/lib/pgsql/data/*
 
 #Start postgresql
-RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
-    && yum install -y perfsonar-testpoint perfsonar-toolkit-security \
-    && yum clean all \
+RUN su - postgres -c "/usr/bin/pg_ctl start -w -t 60" \
+    && dnf install -y perfsonar-testpoint perfsonar-toolkit-security \
+    && dnf clean all \
     && rm -rf /var/cache/yum
 
 # End PostgreSQL Setup
