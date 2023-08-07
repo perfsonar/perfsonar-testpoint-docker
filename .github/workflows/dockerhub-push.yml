@@ -1,4 +1,4 @@
-name: CI
+name: Dockerhub Push
 
 # Controls when the workflow will run
 on:
