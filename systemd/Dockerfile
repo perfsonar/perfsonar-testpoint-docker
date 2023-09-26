@@ -1,6 +1,7 @@
 # perfSONAR Testpoint
 
 FROM rockylinux/rockylinux:8
+ENV container docker
 
 # -----------------------------------------------------------------------
 ## Commands required to run systemd 
