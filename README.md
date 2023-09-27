@@ -37,7 +37,7 @@ To run this version on older docker:
 >docker pull perfsonar/testpoint:systemd  
 >docker run -d --net=host --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro perfsonar/testpoint:systemd
 
-Or, build and run it using [docker compose plugin](https://docs.docker.com/compose/) >= 2.16.0:
+Or, build and run it using [docker compose](https://docs.docker.com/compose/) >= 2.16.0:
 >docker compose -f docker-compose.systemd.yml build  
 >docker compose -f docker-compose.systemd.yml up -d  
 
