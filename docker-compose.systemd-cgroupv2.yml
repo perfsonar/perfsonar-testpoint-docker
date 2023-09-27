@@ -1,3 +1,4 @@
+services:
   testpoint:
     image: perfsonar/testpoint:systemd-rocky8
     build:
