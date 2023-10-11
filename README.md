@@ -29,13 +29,17 @@ Run the container:
 
 Besides the default version based on supervisord, there is also a testpoint container based on systemd.
 
-To run this version:
+To run this version on docker >= 20.0.0:
+>docker pull perfsonar/testpoint:systemd  
+>docker run -d --net=host --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns host perfsonar/testpoint:systemd
+
+To run this version on older docker:
 >docker pull perfsonar/testpoint:systemd  
 >docker run -d --net=host --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro perfsonar/testpoint:systemd
 
-Or, build and run it using [docker-compose](https://docs.docker.com/compose/):
->docker-compose -f docker-compose.systemd.yml build  
->docker-compose -f docker-compose.systemd.yml up -d  
+Or, build and run it using [docker compose](https://docs.docker.com/compose/) >= 2.16.0:
+>docker compose -f docker-compose.systemd.yml build  
+>docker compose -f docker-compose.systemd.yml up -d  
 
 ## Testing
 
