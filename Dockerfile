@@ -42,6 +42,7 @@ COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 
 # Change own user
 RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
+RUN chmod 0755 /var/lib/pgsql
 
 #Start postgresql
 RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
