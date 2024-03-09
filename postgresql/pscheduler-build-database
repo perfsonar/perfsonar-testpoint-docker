@@ -15,7 +15,7 @@ random-string --safe --length 60 --randlength > '/etc/pscheduler/database/databa
 echo "Password generated"
 
 # Generate the DSN file
-awk -v "ROLE=${ROLE}" '{ printf "host=127.0.0.1 dbname=pscheduler user=%s password=%s\n", ROLE, $1 }' \
+awk -v "ROLE=${ROLE}" '{ printf "host=localhost dbname=pscheduler user=%s password=%s\n", ROLE, $1 }' \
     "/etc/pscheduler/database/database-password" \
     > "/etc/pscheduler/database/database-dsn"
 echo "DSN generated"

@@ -43,7 +43,7 @@ if [ "$action" == "start" ]; then
       docker run -h $hostname -d --net=host perfsonar/${bundle}
       container_id=$(docker ps | grep "$bundle" | awk '{print $1}')
       sleep 3
-      ip_address=$(docker exec -it $container_id ifconfig eth0 | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+      ip_address=$(docker exec -it $container_id ifconfig eth0 | sed -En 's/localhost//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
       docker exec -it $container_id bash -c "echo \"$ip_address $hostname\" >> /etc/hosts"
    else
       echo "Using existing container $container_id"
