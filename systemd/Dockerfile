@@ -27,7 +27,7 @@ RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
 # -----------------------------------------------------------------------
 
 RUN apt-get update \
-    && apt-get install -y curl gnupg rsyslog net-tools sysstat iproute2 dnsutils tcpdump \
+    && apt-get install -y vim curl gnupg rsyslog net-tools sysstat iproute2 dnsutils tcpdump \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -58,8 +58,7 @@ RUN su - $PG_USER -c "$PG_BINDIR/pg_ctl start -w -t 60 -D $PGDATA"
 # -----------------------------------------------------------------------------
 
 # Rsyslog
-# Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
-# as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
+
 COPY rsyslog/rsyslog /etc/init.d/rsyslog
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
@@ -72,8 +71,6 @@ RUN curl -o /etc/apt/sources.list.d/perfsonar-5.1-snapshot.list http://downloads
     && curl http://downloads.perfsonar.net/debian/perfsonar-snapshot.gpg.key | apt-key add - \
     && add-apt-repository universe
 
-
-## Missing perfsonar-toolkit-security
 RUN apt-get update \
     && apt-get install -y perfsonar-testpoint \
     && apt-get clean \
