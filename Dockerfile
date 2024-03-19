@@ -1,65 +1,60 @@
 # perfSONAR Testpoint
 
-FROM centos:centos7
+FROM ubuntu:22.04
 
-RUN yum -y install \
-    epel-release \
-    http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfsonar-repo-0.11-1.noarch.rpm \
-    && yum -y install \
-    supervisor \
-    rsyslog \
-    net-tools \
-    sysstat \
-    iproute \
-    bind-utils \
-    tcpdump \
-    postgresql10-server
+ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update \
+    && apt-get install -y vim curl gnupg rsyslog net-tools sysstat iproute2 dnsutils tcpdump software-properties-common supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # -----------------------------------------------------------------------
 
 #
 # PostgreSQL Server
 #
-# Based on a Dockerfile at
-# https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
-# Postgresql version
-ENV PG_VERSION 10
-ENV PGVERSION 10
+ENV PG_VERSION=14 \
+    PG_USER=postgres
 
-# Set the environment variables
-ENV PGDATA /var/lib/pgsql/10/data
+ENV PG_HOME=/etc/postgresql/$PG_VERSION/main \ 
+    PG_BINDIR=/usr/lib/postgresql/$PG_VERSION/bin \
+    PGDATA=/var/lib/postgresql/$PG_VERSION/main
 
-# Create run directory (using /run for Kaniko build)
-RUN install -dv --mode=775 --owner=postgres --group=postgres /var/run/postgresql /run/postgresql
+RUN apt-get update \
+    && apt-get install -y postgresql-$PG_VERSION postgresql-client-$PG_VERSION \
+    && rm -rf $PGDATA
 
-# Initialize the database
-RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl init"
+RUN su - $PG_USER -c "$PG_BINDIR/pg_ctl init -D $PGDATA"
+     
+COPY --chown=$PG_USER:$PG_USER postgresql/postgresql.conf $PG_HOME/postgresql.conf
+COPY --chown=$PG_USER:$PG_USER postgresql/pg_hba.conf $PG_HOME/pg_hba.conf
 
-# Overlay the configuration files
-COPY postgresql/postgresql.conf /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
-COPY postgresql/pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
+RUN su - $PG_USER -c "$PG_BINDIR/pg_ctl start -w -t 60 -D $PGDATA"
 
-# Change own user
-RUN chown -R postgres:postgres /var/lib/pgsql/$PG_VERSION/data/*
-
-#Start postgresql
-RUN su - postgres -c "/usr/pgsql-10/bin/pg_ctl start -w -t 60" \
-    && yum install -y perfsonar-testpoint perfsonar-toolkit-security \
-    && yum clean all \
-    && rm -rf /var/cache/yum
-
-# End PostgreSQL Setup
-
-# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 # Rsyslog
-# Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
-# as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
+
+COPY rsyslog/rsyslog /etc/init.d/rsyslog
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
+
+# -----------------------------------------------------------------------------
+
+RUN curl -o /etc/apt/sources.list.d/perfsonar-5.1-snapshot.list http://downloads.perfsonar.net/debian/perfsonar-5.1-snapshot.list \
+    && curl http://downloads.perfsonar.net/debian/perfsonar-snapshot.gpg.key | apt-key add - \
+    && add-apt-repository universe
+
+RUN apt-get update \
+    && apt-get install -y perfsonar-testpoint \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # -----------------------------------------------------------------------------
 
@@ -68,13 +63,14 @@ ADD supervisord.conf /etc/supervisord.conf
 
 # The following ports are used:
 # pScheduler: 443
-# owamp:861, 8760-9960
-# twamp: 862, 18760-19960
+# owamp:861, 8760-9960 (tcp and udp)
+# twamp: 862, 18760-19960 (tcp and udp)
 # simplestream: 5890-5900
 # nuttcp: 5000, 5101
 # iperf2: 5001
 # iperf3: 5201
-EXPOSE 443 861 862 5000-5001 5101 5201 8760-9960 18760-19960
+# ntp: 123 (udp)
+EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 5890-5900 8760-9960/tcp 8760-9960/udp 18760-19960/tcp 18760-19960/udp
 
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
