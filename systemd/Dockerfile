@@ -1,82 +1,80 @@
-# perfSONAR Testpoint
+FROM ubuntu:22.04
 
-FROM rockylinux/rockylinux:8
 ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN sed -i 's/# deb/deb/g' /etc/apt/sources.list
+
+RUN apt-get update \
+    && apt-get install -y systemd systemd-sysv software-properties-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN cd /lib/systemd/system/sysinit.target.wants/ \
+    && ls | grep -v systemd-tmpfiles-setup | xargs rm -f $1
+
+RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
+    /etc/systemd/system/*.wants/* \
+    /lib/systemd/system/local-fs.target.wants/* \
+    /lib/systemd/system/sockets.target.wants/*udev* \
+    /lib/systemd/system/sockets.target.wants/*initctl* \
+    /lib/systemd/system/basic.target.wants/* \
+    /lib/systemd/system/anaconda.target.wants/* \
+    /lib/systemd/system/plymouth* \
+    /lib/systemd/system/systemd-update-utmp*
 
 # -----------------------------------------------------------------------
-## Commands required to run systemd 
 
-# Don't start any optional services except for the few we need.
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
-rm -f /lib/systemd/system/multi-user.target.wants/*;\
-rm -f /etc/systemd/system/*.wants/*;\
-rm -f /lib/systemd/system/local-fs.target.wants/*; \
-rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
-rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
-rm -f /lib/systemd/system/basic.target.wants/*;\
-rm -f /lib/systemd/system/anaconda.target.wants/*;
-
-STOPSIGNAL SIGRTMIN+3
-
-# setting systemd boot target
-# multi-user.target: analogous to runlevel 3, Text mode
-RUN systemctl set-default multi-user.target
-RUN systemctl mask dev-hugepages.mount sys-fs-fuse-connections.mount
-
-# -----------------------------------------------------------------------
-
-RUN dnf -y install \
-    epel-release \
-    http://software.internet2.edu/rpms/el8/x86_64/latest/packages/perfsonar-repo-0.11-1.noarch.rpm \
-    && dnf config-manager --set-enabled powertools \
-    && dnf -y install \
-    rsyslog \
-    net-tools \
-    sysstat \
-    iproute \
-    bind-utils \
-    tcpdump \
-    postgresql-server
+RUN apt-get update \
+    && apt-get install -y vim curl gnupg rsyslog net-tools sysstat iproute2 dnsutils tcpdump \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # -----------------------------------------------------------------------
 
 #
 # PostgreSQL Server
 #
-# Based on a Dockerfile at
-# https://raw.githubusercontent.com/zokeber/docker-postgresql/master/Dockerfile
 
-# Set the environment variables
-ENV PGDATA /var/lib/pgsql/data
+ENV PG_VERSION=14 \
+    PG_USER=postgres
 
-# Initialize the database
-RUN su - postgres -c "/usr/bin/pg_ctl init"
+ENV PG_HOME=/etc/postgresql/$PG_VERSION/main \ 
+    PG_BINDIR=/usr/lib/postgresql/$PG_VERSION/bin \
+    PGDATA=/var/lib/postgresql/$PG_VERSION/main
 
-# Overlay the configuration files
-COPY postgresql/postgresql.conf /var/lib/pgsql/data/postgresql.conf
-COPY postgresql/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
+RUN apt-get update \
+    && apt-get install -y postgresql-$PG_VERSION postgresql-client-$PG_VERSION \
+    && rm -rf $PGDATA
 
-# Change own user
-RUN chown -R postgres:postgres /var/lib/pgsql/data/*
+RUN su - $PG_USER -c "$PG_BINDIR/pg_ctl init -D $PGDATA"
+     
+COPY --chown=$PG_USER:$PG_USER postgresql/postgresql.conf $PG_HOME/postgresql.conf
+COPY --chown=$PG_USER:$PG_USER postgresql/pg_hba.conf $PG_HOME/pg_hba.conf
 
-#Start postgresql
-RUN su - postgres -c "/usr/bin/pg_ctl start -w -t 60" \
-    && dnf install -y perfsonar-testpoint perfsonar-toolkit-security \
-    && dnf clean all \
-    && rm -rf /var/cache/yum
-
-# End PostgreSQL Setup
+RUN su - $PG_USER -c "$PG_BINDIR/pg_ctl start -w -t 60 -D $PGDATA"
 
 # -----------------------------------------------------------------------------
 
 # Rsyslog
-# Note: need to modify default CentOS7 rsyslog configuration to work with Docker, 
-# as described here: http://www.projectatomic.io/blog/2014/09/running-syslog-within-a-docker-container/
+
+COPY rsyslog/rsyslog /etc/init.d/rsyslog
 COPY rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY rsyslog/listen.conf /etc/rsyslog.d/listen.conf
 COPY rsyslog/python-pscheduler.conf /etc/rsyslog.d/python-pscheduler.conf
 COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
+# -----------------------------------------------------------------------
+
+RUN curl -o /etc/apt/sources.list.d/perfsonar-5.1-snapshot.list http://downloads.perfsonar.net/debian/perfsonar-5.1-snapshot.list \
+    && curl http://downloads.perfsonar.net/debian/perfsonar-snapshot.gpg.key | apt-key add - \
+    && add-apt-repository universe
+
+RUN apt-get update \
+    && apt-get install -y perfsonar-testpoint \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # -----------------------------------------------------------------------------
 
@@ -92,6 +90,6 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 5890-5900 8760-9960/tcp 8760-9960/udp 18760-19960/tcp 18760-19960/udp
 
 # add cgroups, logging, and postgres directory
-VOLUME ["/var/lib/pgsql", "/var/log", "/etc/rsyslog.d", "/sys/fs/cgroup" ]
+VOLUME [ "/var/lib/postgresql", "/var/log", "/sys/fs/cgroup" ]
 
-CMD ["/usr/sbin/init"]
+CMD [ "/lib/systemd/systemd" ]
