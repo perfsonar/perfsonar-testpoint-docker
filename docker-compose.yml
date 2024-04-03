@@ -7,8 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile
     network_mode: "host"
-    cap_add:
-      - CAP_NET_BIND_SERVICE
     restart: on-failure
     volumes:
        - ./compose/psconfig:/etc/perfsonar/psconfig
