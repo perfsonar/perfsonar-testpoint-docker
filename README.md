@@ -19,7 +19,7 @@ To run the systemd-based version, follow these steps:
 Docker version required >= 20.0.0
 ```bash
 docker pull perfsonar/testpoint:systemd  
-docker run -d --name perfsonar-testpoint --net=host --tmpfs /run --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:rw -v ./compose/psconfig:/etc/perfsonar/psconfig --cgroupns host perfsonar/testpoint:systemd
+docker run -td --name perfsonar-testpoint --net=host --tmpfs /run --tmpfs /run/lock --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:rw -v ./compose/psconfig:/etc/perfsonar/psconfig --cgroupns host perfsonar/testpoint:systemd
 ```
 
 Or, build and run it using [docker compose](https://docs.docker.com/compose/) >= 2.16.0:
