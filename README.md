@@ -7,6 +7,7 @@ The docker container runs all perfSONAR 5.0x Services in the "Testpoint" bundle,
 http://docs.perfsonar.net/install_options.html
 
 This can be used to run perfSONAR 5.0x Testpoint services on any OS that supports docker.
+It is based on a CentOS7 release, which goes out of support in July 2024
 
 Download the container:
 >docker pull perfsonar/testpoint
