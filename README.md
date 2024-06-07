@@ -1,12 +1,12 @@
-## perfSONAR 4.X Testpoint docker container
+## perfSONAR 5.0x Testpoint docker container
 
 NOTE: This now seems to be working. Testers needed. Please submit problems to:
   https://github.com/perfsonar/perfsonar-testpoint-docker/issues
 
-The docker container runs all perfSONAR 4.x Services in the "Testpoint" bundle, as described at:
+The docker container runs all perfSONAR 5.0x Services in the "Testpoint" bundle, as described at:
 http://docs.perfsonar.net/install_options.html
 
-This can be used to run perfSONAR 4.x Testpoint services on any OS that supports docker.
+This can be used to run perfSONAR 5.0x Testpoint services on any OS that supports docker.
 
 Download the container:
 >docker pull perfsonar/testpoint
