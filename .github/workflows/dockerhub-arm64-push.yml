@@ -1,12 +1,19 @@
-name: Dockerhub Push
+name: Multi-platform Docker Image Push
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: [ '*' ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ 'master' ]
+
+env:
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_BASE: ${{ github.repository }}
+  BUILD_DIR: .
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -28,13 +35,39 @@ jobs:
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build the Docker image for arm64 platforms
-      run: docker buildx build . --file Dockerfile --tag perfsonar-testpoint-arm64:$(date +%s) --platform linux/arm/v7
-
-    - name: Publish to Docker Hub
-      uses: docker/build-push-action@v1
+    # Login against a Docker registry except on PR
+    # https://github.com/docker/login-action
+    - name: Log into registry ${{ env.REGISTRY }}
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: cs1867/git-testpoint
-        tags: latest
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Extract metadata (tags, labels) for Docker
+    # https://github.com/docker/metadata-action
+    - name: Extract Docker metadata
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
+        tags: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=tag
+          type=ref,event=pr
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+
+    # Build and push Docker image with Buildx (don't push on PR)
+    # https://github.com/docker/build-push-action
+    - name: Build and push Docker images
+      id: build-and-push
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ env.BUILD_DIR }}
+        file: ${{ env.BUILD_DIR }}/Dockerfile
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64,linux/arm/v7
