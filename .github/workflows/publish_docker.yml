@@ -81,7 +81,7 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
 
     - name: Build and push Systemd Docker images
       id: build-and-push-systemd
@@ -92,4 +92,4 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.metasysd.outputs.tags }}
         labels: ${{ steps.metasysd.outputs.labels }}
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
