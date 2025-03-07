@@ -21,16 +21,21 @@ env:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    strategy:
+      matrix:
+        platform: [ linux/amd64, linux/arm64 ]
+        include:
+          - platform: linux/amd64
+            runs_on: ubuntu-latest
+          - platform: linux/arm64
+            runs_on: ubuntu-24.04-arm
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs_on }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v3
-
-    - name: Setup QEMU
-      uses: docker/setup-qemu-action@v3
-
+  
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -81,7 +86,7 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ matrix.platform }}
 
     - name: Build and push Systemd Docker images
       id: build-and-push-systemd
@@ -92,4 +97,4 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.metasysd.outputs.tags }}
         labels: ${{ steps.metasysd.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ matrix.platform }}
