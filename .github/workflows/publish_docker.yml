@@ -60,7 +60,6 @@ jobs:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
         tags: |
           type=schedule,suffix=-${{ matrix.suffix_tag }}
-          type=sha,suffix=-${{ matrix.suffix_tag }}
           type=ref,event=branch,suffix=-${{ matrix.suffix_tag }}
           type=ref,event=tag,suffix=-${{ matrix.suffix_tag }}
           type=ref,event=pr,suffix=-${{ matrix.suffix_tag }}
@@ -73,7 +72,6 @@ jobs:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
         tags: |
           type=schedule,suffix=-systemd-${{ matrix.suffix_tag }}
-          type=sha,suffix=-systemd-${{ matrix.suffix_tag }}
           type=ref,event=branch,suffix=-systemd-${{ matrix.suffix_tag }}
           type=ref,event=tag,suffix=-systemd-${{ matrix.suffix_tag }}
           type=ref,event=pr,suffix=-systemd-${{ matrix.suffix_tag }}
@@ -106,8 +104,8 @@ jobs:
   manifest_metadata:
     runs-on: ubuntu-latest
     outputs:
-      manifest: ${{ steps.manifest_meta.outputs.tags }}
-      manifest_sysd: ${{ steps.manifest_sysd_meta.outputs.tags }}
+      manifest: ${{ steps.manifest_meta.outputs }}
+      manifest_sysd: ${{ steps.manifest_sysd_meta.outputs }}
     steps:
     - name: Extract Docker metadata for manifest
       id: manifest_meta
@@ -116,7 +114,6 @@ jobs:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
         tags: |
           type=schedule
-          type=sha
           type=ref,event=branch
           type=ref,event=tag
           type=ref,event=pr
@@ -139,7 +136,7 @@ jobs:
       - manifest_metadata
     strategy:
       matrix:
-        tags: ${{ needs.manifest_metadata.outputs.manifest }}
+        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest.tags) }}
     runs-on: ubuntu-latest
     steps:
     - name: Log into registry ${{ env.REGISTRY }}
@@ -162,7 +159,7 @@ jobs:
       - manifest_metadata
     strategy:
       matrix:
-        tags: ${{ needs.manifest_metadata.outputs.manifest_sysd }}
+        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest_sysd.tags) }}
     runs-on: ubuntu-latest
     steps:
     - name: Log into registry ${{ env.REGISTRY }}
