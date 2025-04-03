@@ -27,8 +27,10 @@ jobs:
         include:
           - platform: linux/amd64
             runs_on: ubuntu-latest
+            suffix_tag: amd64
           - platform: linux/arm64
             runs_on: ubuntu-24.04-arm
+            suffix_tag: arm64
     # The type of runner that the job will run on
     runs-on: ${{ matrix.runs_on }}
 
@@ -57,11 +59,11 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
         tags: |
-          type=schedule
-          type=ref,event=branch
-          type=ref,event=tag
-          type=ref,event=pr
-          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=schedule,suffix=-${{ matrix.suffix_tag }}
+          type=ref,event=branch,suffix=-${{ matrix.suffix_tag }}
+          type=ref,event=tag,suffix=-${{ matrix.suffix_tag }}
+          type=ref,event=pr,suffix=-${{ matrix.suffix_tag }}
+          type=raw,value=latest-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
     - name: Extract Systemd Docker metadata
       id: metasysd
@@ -69,11 +71,11 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}
         tags: |
-          type=schedule,suffix=-systemd
-          type=ref,event=branch,suffix=-systemd
-          type=ref,event=tag,suffix=-systemd
-          type=ref,event=pr,suffix=-systemd
-          type=raw,value=systemd,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=schedule,suffix=-systemd-${{ matrix.suffix_tag }}
+          type=ref,event=branch,suffix=-systemd-${{ matrix.suffix_tag }}
+          type=ref,event=tag,suffix=-systemd-${{ matrix.suffix_tag }}
+          type=ref,event=pr,suffix=-systemd-${{ matrix.suffix_tag }}
+          type=raw,value=systemd-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
     # Build and push Docker image with Buildx (don't push on PR)
     # https://github.com/docker/build-push-action
