@@ -104,8 +104,8 @@ jobs:
   manifest_metadata:
     runs-on: ubuntu-latest
     outputs:
-      manifest: ${{ steps.manifest_meta.outputs }}
-      manifest_sysd: ${{ steps.manifest_sysd_meta.outputs }}
+      manifest: ${{ steps.manifest_meta.outputs.json }}
+      manifest_sysd: ${{ steps.manifest_sysd_meta.outputs.json }}
     steps:
     - name: Extract Docker metadata for manifest
       id: manifest_meta
