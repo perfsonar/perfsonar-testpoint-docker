@@ -105,7 +105,7 @@ jobs:
 
     # Build and push Docker image with Buildx (don't push on PR)
     # Note the 'provenance: false' option is set to prevent attestations from being created. Attestations leads to a manifest being created with some unhelpful features in our context:
-    #  - The manifest created references the single arcitecture built and then has another reference to an "unkown/unkown" architecture. Not sure what it does, but at the very least it causes confusion.
+    #  - The manifest created references the single architecture built and then has another reference to an "unkown/unkown" architecture. Not sure what it does, but at the very least it causes confusion.
     #  - A much bigger reason is that it prevents our abilty to create a multi-arch manifest in later steps since you can't create a manifest from another manifest
     # https://github.com/docker/build-push-action
     - name: Build and push Docker images
