@@ -5,8 +5,8 @@ name: Multi-platform Docker Image Push
 # Description:
 # This workflow builds and pushes Docker images for multiple architectures using GitHub Actions. It builds both the supervisord and systemd images. There are quite a bit of non-obvious steps in this workflow, so here is a brief description of some of the important pieces:
 #  - One way to build multi-arch images is to use something called QEMU. This allows you to run a different architecture on a host machine different from the target architecture. This does not work consistently in GitHub actions, so we use a different approach. We build the images on the target architecture using a different runner for each architecture. This is done using the 'runs-on' property in the matrix and an image using the target architecture.
-#  - Because we build each image in different containers, we cannot push them all to the same tag as they will overwrite each other. Instead on the initial build we have to include the architecture in tag.
-#  - We ultimately want one tag the users can pull the image from independent of architecture. The way docker publishes an image with multiple architectures is to create a manifest file. This is a special type of image that contains references to other images and information about which platform is supported by the references images. The manifest is created in a separate job after the images are built and pushed. The manifest is created using the docker manifest command.
+#  - Because we build each image in different containers, we cannot push them all to the same tag as they will overwrite each other. Instead on the initial build we have to include the architecture in the tag name.
+#  - We ultimately want one tag the users can pull the image from independent of architecture. The way docker publishes an image with multiple architectures is to create a manifest file. This is a special type of image that contains references to other images and information about which platform is supported by the referenced images. The manifest is created in a separate job after the images are built and pushed. The manifest is created using the docker manifest command.
 #
 # See the comments in the remainder of the file for more details on each step.
 ###
@@ -51,19 +51,18 @@ jobs:
           - platform: linux/arm64
             runs_on: ubuntu-24.04-arm
             suffix_tag: arm64
-    # Runs-on set using a matrix variable since Each architecture needs to run on an image using the same architecture as the target platform
+    # Runs-on set using a matrix variable since each architecture needs to run on an image using the same architecture as the target platform
     runs-on: ${{ matrix.runs_on }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checkout the code from this repository
     - uses: actions/checkout@v3
-    # Setup docker buildx in container
+    # Setup docker buildx in this container
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
 
     # Login against a Docker registry except on PR
-    # https://github.com/docker/login-action
     - name: Log into registry ${{ env.REGISTRY }}
       if: github.event_name != 'pull_request'
       uses: docker/login-action@v2
@@ -72,7 +71,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
-    # Extract Docker metadata to be used in supervisord image. This primarily calculates the image tags and labels based branch name, tag name, etc
+    # Extract Docker metadata to be used in supervisord image. This primarily calculates the image tags and labels based on branch name, tag name, etc
     # Note that the tag at this phase includes the architecture name so that different architectures don't collide.
     - name: Extract Docker metadata
       id: meta
@@ -88,7 +87,7 @@ jobs:
           type=ref,event=pr,suffix=-${{ matrix.suffix_tag }}
           type=raw,value=latest-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
 
-    # Extract Docker metadata to be used in systemd image. This primarily calculates the image tags and labels based branch name, tag name, etc
+    # Extract Docker metadata to be used in systemd image. This primarily calculates the image tags and labels based on branch name, tag name, etc
     # Note that the tag at this phase includes the architecture name so that different architectures don't collide.
     - name: Extract Systemd Docker metadata
       id: metasysd
@@ -105,7 +104,9 @@ jobs:
           type=raw,value=systemd-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
 
     # Build and push Docker image with Buildx (don't push on PR)
-    # Note the 'provenance: false' option is set to prevent attestation files from being created. This leads to a single architecture manifest being created that prevents are abilty to create a multi-arch manifest in later steps.
+    # Note the 'provenance: false' option is set to prevent attestations from being created. Attestations leads to a manifest being created with some unhelpful features in our context:
+    #  - The manifest created references the single arcitecture built and then has another reference to an "unkown/unkown" architecture. Not sure what it does, but at the very least it causes confusion.
+    #  - A much bigger reason is that it prevents our abilty to create a multi-arch manifest in later steps since you can't create a manifest from another manifest
     # https://github.com/docker/build-push-action
     - name: Build and push Docker images
       id: build-and-push
