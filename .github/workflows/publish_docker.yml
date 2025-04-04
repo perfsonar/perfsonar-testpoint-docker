@@ -136,7 +136,7 @@ jobs:
       - manifest_metadata
     strategy:
       matrix:
-        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest.tags) }}
+        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest).tags }}
     runs-on: ubuntu-latest
     steps:
     - name: Log into registry ${{ env.REGISTRY }}
@@ -159,7 +159,7 @@ jobs:
       - manifest_metadata
     strategy:
       matrix:
-        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest_sysd.tags) }}
+        tags: ${{ fromJson(needs.manifest_metadata.outputs.manifest_sysd).tags }}
     runs-on: ubuntu-latest
     steps:
     - name: Log into registry ${{ env.REGISTRY }}
