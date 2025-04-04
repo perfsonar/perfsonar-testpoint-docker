@@ -148,10 +148,10 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Create manifest
       run: |
-        docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }} \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}-amd64 \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}-arm64
-        docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}
+        docker manifest create ${{ matrix.tags }} \
+          ${{ matrix.tags }}-amd64 \
+          ${{ matrix.tags }}-arm64
+        docker manifest push ${{ matrix.tags }}
 
   create_sysd_manifest:
     needs: 
@@ -171,7 +171,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Create manifest
       run: |
-        docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }} \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}-amd64 \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}-arm64
-        docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}:${{ matrix.tags }}
+        docker manifest create ${{ matrix.tags }} \
+          ${{ matrix.tags }}-amd64 \
+          ${{ matrix.tags }}-arm64
+        docker manifest push ${{ matrix.tags }}
