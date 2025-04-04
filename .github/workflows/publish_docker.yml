@@ -88,6 +88,7 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        provenance: false
         platforms: ${{ matrix.platform }}
 
     - name: Build and push Systemd Docker images
@@ -99,6 +100,7 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.metasysd.outputs.tags }}
         labels: ${{ steps.metasysd.outputs.labels }}
+        provenance: false
         platforms: ${{ matrix.platform }}
 
   manifest_metadata:
