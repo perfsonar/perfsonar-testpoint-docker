@@ -1,0 +1,68 @@
+apiVersion: v1
+data:
+  pscheduler-agent-logger.conf: |
+    [loggers]
+    keys=root,TaskLogger,TransactionLogger,psconfig
+
+    [formatters]
+    keys=patternLayout,rootPatternLayout
+
+    [handlers]
+    keys=fileRotateTask,fileRotateTransaction,nullRoot,fileRotatePSConfig
+
+    [formatter_patternLayout]
+    format=%(asctime)s %(levelname)s %(message)s
+    datefmt=%Y-%m-%d %H:%M:%S
+
+    [formatter_rootPatternLayout]
+    format=%(asctime)s %(levelname)s pid=%(process)d prog=%(funcName)s line=%(lineno)d %(message)s
+    datefmt=%Y-%m-%d %H:%M:%S
+
+    [logger_root]
+    level=NOTSET
+    handlers=nullRoot
+
+    [logger_psconfig]
+    level=NOTSET
+    qualname=psconfig
+    handlers=fileRotatePSConfig
+
+    [logger_TaskLogger]
+    level=INFO
+    qualname=TaskLogger
+    handlers=fileRotateTask
+
+    [logger_TransactionLogger]
+    level=INFO
+    qualname=TransactionLogger
+    handlers=fileRotateTransaction
+
+    [handler_fileRotateTask]
+    class=handlers.RotatingFileHandler
+    level=INFO
+    formatter=patternLayout
+    maxBytes=16777216
+    backupCount=7
+    args=('/var/log/perfsonar/psconfig-pscheduler-agent-tasks.log', 'a')
+
+    [handler_nullRoot]
+    class=logging.NullHandler
+
+    [handler_fileRotatePSConfig]
+    class=handlers.RotatingFileHandler
+    level=INFO
+    formatter=rootPatternLayout
+    maxBytes=16777216
+    backupCount=7
+    args=('/var/log/perfsonar/psconfig-pscheduler-agent.log', 'a')
+
+    [handler_fileRotateTransaction]
+    class=handlers.RotatingFileHandler
+    level=DEBUG
+    formatter=patternLayout
+    maxBytes=16777216
+    backupCount=7
+    args=('/var/log/perfsonar/psconfig-pscheduler-agent-transactions.log', 'a')
+kind: ConfigMap
+metadata:
+  name: pscheduler-configmap
