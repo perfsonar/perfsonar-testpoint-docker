@@ -47,8 +47,8 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 # -----------------------------------------------------------------------------
 
-RUN curl -o /etc/apt/sources.list.d/perfsonar-5.1-snapshot.list http://downloads.perfsonar.net/debian/perfsonar-5.1-snapshot.list \
-    && curl http://downloads.perfsonar.net/debian/perfsonar-snapshot.gpg.key | apt-key add - \
+RUN curl -o /etc/apt/sources.list.d/perfsonar-minor-staging.list http://downloads.perfsonar.net/debian/perfsonar-minor-staging.list \
+    && curl http://downloads.perfsonar.net/debian/perfsonar-staging.gpg.key | apt-key add - \
     && add-apt-repository universe
 
 RUN apt-get update \
