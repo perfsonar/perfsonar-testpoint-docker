@@ -111,12 +111,19 @@ volumes:
    configMap:
      name: pscheduler-configmap
 
+ - name: postgresql-data
+   persistentVolumeClaim:
+     claimName: postgres-pvc
+
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts: 
  - name: pschedulerconfig
    mountPath: "/etc/perfsonar/psconfig"
    #   subPath: pscheduler-agent-logger.conf
    readOnly: true
+
+ - name: postgres-data
+   mountPath: /mnt
 
 nodeSelector: {}
 
