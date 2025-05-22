@@ -1,3 +1,21 @@
+initContainers:
+  - name: init-postgresql
+    image: ghcr.io/perfsonar/testpoint:v5.2.0-b1.2-amd64
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+      - -c
+      - |
+        if [ ! -d "/var/lib/postgresql/data/pg_wal" ]; then
+          echo "Initializing PostgreSQL database..."
+          /usr/local/bin/docker-entrypoint.sh postgres
+        else
+          echo "PostgreSQL data directory already initialized."
+        fi
+    volumeMounts:
+      - name: postgresql-data
+        mountPath: /var/lib/postgresql/data
+        
 # Default values for perfsonar.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
