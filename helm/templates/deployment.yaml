@@ -42,7 +42,7 @@ spec:
             - |
               if [ ! -d "/var/lib/postgresql/data/pg_wal" ]; then
                 echo "Initializing PostgreSQL database..."
-                cp -rP /var/lib/postgresql/ /var/lib/postgresql-1/
+                rsync -azv /var/lib/postgresql/ /var/lib/postgresql-1/
               else
                 echo "PostgreSQL data directory already initialized."
               fi
