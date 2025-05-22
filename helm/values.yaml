@@ -8,13 +8,13 @@ initContainers:
       - |
         if [ ! -d "/var/lib/postgresql/data/pg_wal" ]; then
           echo "Initializing PostgreSQL database..."
-          /usr/local/bin/docker-entrypoint.sh postgres
+          cp -rP /var/lib/postgresql/ /var/lib/postgresql-1/
         else
           echo "PostgreSQL data directory already initialized."
         fi
     volumeMounts:
       - name: postgresql-data
-        mountPath: /var/lib/postgresql/data
+        mountPath: /var/lib/postgresql-1
         
 # Default values for perfsonar.
 # This is a YAML-formatted file.
