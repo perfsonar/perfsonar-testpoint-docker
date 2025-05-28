@@ -37,7 +37,7 @@ spec:
               service:
                 name: {{ include "perfsonar.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $.Values.service.ports }}
           {{- end }}
     {{- end }}
 {{- end }}
