@@ -7,9 +7,11 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.service.ports }}
+    {{- range .Values.service.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
       targetPort: {{ .targetPort }}
       protocol: {{ .protocol | default "TCP" }}
-      name: {{ .name }}
+    {{- end }}
   selector:
     {{- include "perfsonar.selectorLabels" . | nindent 4 }}
