@@ -62,7 +62,6 @@ spec:
             - name: {{ .name }}
               containerPort: {{ .targetPort }}
               protocol: {{ .protocol | default "TCP" }}
-            {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
