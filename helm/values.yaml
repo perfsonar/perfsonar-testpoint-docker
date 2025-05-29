@@ -52,43 +52,11 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
-      protocol: TCP
-    - name: https
-      port: 443
-      targetPort: 443
-      protocol: TCP
-    - name: owamp
-      port: 861
-      targetPort: 861
-      protocol: TCP
-    - name: twamp
-      port: 862
-      targetPort: 862
-      protocol: TCP
-    - name: simplestream
-      port: 5890
-      targetPort: 5890
-      protocol: TCP
-    - name: nuttcp5000
-      port: 5000
-      targetPort: 5000
-      protocol: TCP
-    - name: nuttcp5101
-      port: 5101
-      targetPort: 5101
-      protocol: TCP
-    - name: iperf3
-      port: 5201
-      targetPort: 5201
-      protocol: TCP
-    - name: ntp
-      port: 123
-      targetPort: 123
-      protocol: UDP
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 80
+
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: true
