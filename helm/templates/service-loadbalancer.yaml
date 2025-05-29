@@ -12,10 +12,30 @@ spec:
       protocol: TCP
       name: owamp
 
+    - port: 8760
+      targetPort: 8760
+      protocol: TCP
+      name: owamp8760
+
+    - port: 8760
+      targetPort: 8760
+      protocol: UDP
+      name: owampudp8760
+
     - port: 862
       targetPort: 862
       protocol: TCP
       name: twamp
+
+    - port: 18760
+      targetPort: 18760
+      protocol: TCP
+      name: twamptcp18760
+
+    - port: 18760
+      targetPort: 18760
+      protocol: UDP
+      name: twampudp18760
 
     - port: 5890
       targetPort: 5890
