@@ -7,11 +7,6 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-
     - port: 861
       targetPort: 861
       protocol: TCP
