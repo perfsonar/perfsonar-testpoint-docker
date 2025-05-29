@@ -71,7 +71,7 @@ ADD supervisord.conf /etc/supervisord.conf
 # iperf3: 5201
 # ntp: 123 (udp)
 #EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 5890-5900 8760-9960/tcp 8760-9960/udp 18760-19960/tcp 18760-19960/udp
-EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 8760/tcp 8760/udp 18760/tcp 18760/udp
+EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 5890-5900 8760-8770/tcp 8760-8770/udp 18760-18770/tcp 18760-18770/udp
 # add pid directory, logging, and postgres directory
 VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
 
