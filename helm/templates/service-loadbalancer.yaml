@@ -11,36 +11,296 @@ spec:
       targetPort: 861
       protocol: TCP
       name: owamp
-
-    - port: 8760
-      targetPort: 8760
-      protocol: TCP
-      name: owamp8760
-
-    - port: 8760
-      targetPort: 8760
-      protocol: UDP
-      name: owampudp8760
-
+      
     - port: 862
       targetPort: 862
       protocol: TCP
       name: twamp
 
+      #owamp TCP range 8760-8770      
+    - port: 8760
+      targetPort: 8760
+      protocol: TCP
+      name: owamp8760
+
+    - port: 8761
+      targetPort: 8761
+      protocol: TCP
+      name: owamp8761
+
+    - port: 8762
+      targetPort: 8762
+      protocol: TCP
+      name: owamp8762
+
+    - port: 8763
+      targetPort: 8763
+      protocol: TCP
+      name: owamp8763
+
+    - port: 8764
+      targetPort: 8764
+      protocol: TCP
+      name: owamp8764
+
+    - port: 8765
+      targetPort: 8765
+      protocol: TCP
+      name: owamp8765
+
+    - port: 8766
+      targetPort: 8766
+      protocol: TCP
+      name: owamp8766
+
+    - port: 8767
+      targetPort: 8767
+      protocol: TCP
+      name: owamp8767
+
+    - port: 8768
+      targetPort: 8768
+      protocol: TCP
+      name: owamp8768
+
+    - port: 8769
+      targetPort: 8769
+      protocol: TCP
+      name: owamp8769
+
+    - port: 8770
+      targetPort: 8770
+      protocol: TCP
+      name: owamp8770
+
+
+      #owamp UDP range 8760-8770
+    - port: 8760
+      targetPort: 8760
+      protocol: UDP
+      name: owampudp8760
+
+    - port: 8761
+      targetPort: 8761
+      protocol: UDP
+      name: owampudp8761
+
+    - port: 8762
+      targetPort: 8762
+      protocol: UDP
+      name: owampudp8762
+
+    - port: 8763
+      targetPort: 8763
+      protocol: UDP
+      name: owampudp8763
+
+    - port: 8764
+      targetPort: 8764
+      protocol: UDP
+      name: owampudp8764
+
+    - port: 8765
+      targetPort: 8765
+      protocol: UDP
+      name: owampudp8765
+
+    - port: 8766
+      targetPort: 8766
+      protocol: UDP
+      name: owampudp8766
+
+    - port: 8767
+      targetPort: 8767
+      protocol: UDP
+      name: owampudp8767
+
+    - port: 8768
+      targetPort: 8768
+      protocol: UDP
+      name: owampudp8768
+
+    - port: 8769
+      targetPort: 8769
+      protocol: UDP
+      name: owampudp8769
+
+    - port: 8770
+      targetPort: 8770
+      protocol: UDP
+      name: owampudp8770
+
+
+      #twamp TCP range 18760-18770
     - port: 18760
       targetPort: 18760
       protocol: TCP
       name: twamptcp18760
 
+    - port: 18761
+      targetPort: 18761
+      protocol: TCP
+      name: twamptcp18761
+
+    - port: 18762
+      targetPort: 18762
+      protocol: TCP
+      name: twamptcp18762
+
+    - port: 18763
+      targetPort: 18763
+      protocol: TCP
+      name: twamptcp18763
+
+    - port: 18764
+      targetPort: 18764
+      protocol: TCP
+      name: twamptcp18764
+
+    - port: 18765
+      targetPort: 18765
+      protocol: TCP
+      name: twamptcp18765
+
+    - port: 18766
+      targetPort: 18766
+      protocol: TCP
+      name: twamptcp18766
+
+    - port: 18767
+      targetPort: 18767
+      protocol: TCP
+      name: twamptcp18767
+
+    - port: 18768
+      targetPort: 18768
+      protocol: TCP
+      name: twamptcp18768
+
+    - port: 18769
+      targetPort: 18769
+      protocol: TCP
+      name: twamptcp18769
+
+    - port: 18770
+      targetPort: 18770
+      protocol: TCP
+      name: twamptcp18770
+
+
+      #twamp UDP range 18760-18770
     - port: 18760
       targetPort: 18760
       protocol: UDP
       name: twampudp18760
 
+    - port: 18761
+      targetPort: 18761
+      protocol: UDP
+      name: twampudp18761
+
+    - port: 18762
+      targetPort: 18762
+      protocol: UDP
+      name: twampudp18762
+
+    - port: 18763
+      targetPort: 18763
+      protocol: UDP
+      name: twampudp18763
+
+    - port: 18764
+      targetPort: 18764
+      protocol: UDP
+      name: twampudp18764
+
+    - port: 18765
+      targetPort: 18765
+      protocol: UDP
+      name: twampudp18765
+
+    - port: 18766
+      targetPort: 18766
+      protocol: UDP
+      name: twampudp18766
+
+    - port: 18767
+      targetPort: 18767
+      protocol: UDP
+      name: twampudp18767
+
+    - port: 18768
+      targetPort: 18768
+      protocol: UDP
+      name: twampudp18768
+
+    - port: 18769
+      targetPort: 18769
+      protocol: UDP
+      name: twampudp18769
+
+    - port: 18770
+      targetPort: 18770
+      protocol: UDP
+      name: twampudp18770
+
+
+
+      #simplestream port range 5890-5900
     - port: 5890
       targetPort: 5890
       protocol: TCP
-      name: simplestream
+      name: simplestream5890
+
+    - port: 5891
+      targetPort: 5891
+      protocol: TCP
+      name: simplestream5891
+
+    - port: 5892
+      targetPort: 5892
+      protocol: TCP
+      name: simplestream5892
+
+    - port: 5893
+      targetPort: 5893
+      protocol: TCP
+      name: simplestream5893
+
+    - port: 5894
+      targetPort: 5894
+      protocol: TCP
+      name: simplestream5894
+
+    - port: 5895
+      targetPort: 5895
+      protocol: TCP
+      name: simplestream5895
+
+    - port: 5896
+      targetPort: 5896
+      protocol: TCP
+      name: simplestream5896
+
+    - port: 5897
+      targetPort: 5897
+      protocol: TCP
+      name: simplestream5897
+
+    - port: 5898
+      targetPort: 5898
+      protocol: TCP
+      name: simplestream5898
+
+    - port: 5899
+      targetPort: 5899
+      protocol: TCP
+      name: simplestream5899
+
+    - port: 5900
+      targetPort: 5900
+      protocol: TCP
+      name: simplestream5900
 
     - port: 5000
       targetPort: 5000
@@ -61,5 +321,6 @@ spec:
       targetPort: 123
       protocol: UDP
       name: ntp
+
   selector:
     {{- include "perfsonar.selectorLabels" . | nindent 4 }}
