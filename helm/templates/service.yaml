@@ -11,5 +11,11 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+
+    - port: 443
+      targetPort: https
+      protocol: TCP
+      name: https
+      
   selector:
     {{- include "perfsonar.selectorLabels" . | nindent 4 }}
