@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: {{ .Release.Name }}-postgres-pvc
   namespace: default
 spec:
   storageClassName: 
