@@ -112,7 +112,7 @@ volumes:
 
  - name: postgresql-data
    persistentVolumeClaim:
-     claimName: postgres-pvc
+     claimName: {{ .Release.Name }}-postgres-pvc
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts: 
