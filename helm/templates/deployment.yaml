@@ -75,32 +75,13 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.volumeMounts }}
-#          volumeMounts:
-#            {{- toYaml . | nindent 12 }}
-#          {{- end }}
-#      {{- with .Values.volumes }}
-#      volumes:
-#        {{- toYaml . | nindent 8 }}
-#      {{- end }}
-volumes: 
- - name: pschedulerconfig
-   configMap:
-     name: pscheduler-configmap
-
- - name: {{ .Release.Name }}-postgresql-data
-   persistentVolumeClaim:
-     claimName: {{ .Release.Name }}-postgres-pvc
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: 
- - name: pschedulerconfig
-   mountPath: "/etc/perfsonar/psconfig"
-   #   subPath: pscheduler-agent-logger.conf
-   readOnly: true
-
- - name: {{ .Release.Name }}-postgresql-data
-   mountPath: /var/lib/postgresql
-
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
