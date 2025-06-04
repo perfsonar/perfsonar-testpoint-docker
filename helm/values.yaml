@@ -105,24 +105,24 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-#volumes: 
-# - name: pschedulerconfig
-#   configMap:
-#     name: pscheduler-configmap
+volumes: 
+ - name: pschedulerconfig
+   configMap:
+     name: pscheduler-configmap
 
-#- name: postgresql-data
-#  persistentVolumeClaim:
-#     claimName: {{ .Release.Name }}-postgres-pvc
+ - name: postgresql-data
+   persistentVolumeClaim:
+     claimName: postgres-pvc
 
 # Additional volumeMounts on the output Deployment definition.
-#volumeMounts: 
-# - name: pschedulerconfig
-#   mountPath: "/etc/perfsonar/psconfig"
-#   #   subPath: pscheduler-agent-logger.conf
-#   readOnly: true
+volumeMounts: 
+ - name: pschedulerconfig
+   mountPath: "/etc/perfsonar/psconfig"
+   #   subPath: pscheduler-agent-logger.conf
+   readOnly: true
 
- #- name: postgresql-data
- #  mountPath: /var/lib/postgresql
+ - name: postgresql-data
+   mountPath: /var/lib/postgresql
 
 nodeSelector: {}
 
