@@ -87,7 +87,7 @@ volumes:
    configMap:
      name: pscheduler-configmap
 
- - name: postgresql-data
+ - name: {{ .Release.Name }}-postgresql-data
    persistentVolumeClaim:
      claimName: {{ .Release.Name }}-postgres-pvc
 
@@ -98,7 +98,7 @@ volumeMounts:
    #   subPath: pscheduler-agent-logger.conf
    readOnly: true
 
- - name: postgresql-data
+ - name: {{ .Release.Name }}-postgresql-data
    mountPath: /var/lib/postgresql
 
       {{- with .Values.nodeSelector }}
