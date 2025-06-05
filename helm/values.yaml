@@ -118,9 +118,9 @@ volumes:
    configMap:
      name: twamp-config 
 
- - name: postgresql-data
-   persistentVolumeClaim:
-     claimName: postgres-pvc
+ #- name: postgresql-data
+ #  persistentVolumeClaim:
+ #    claimName: postgres-pvc
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts: 
@@ -137,8 +137,8 @@ volumeMounts:
    mountPath: "/etc/twamp-server/twamp-server.conf"
    readOnly: true
 
- - name: postgresql-data
-   mountPath: /var/lib/postgresql
+ #- name: postgresql-data
+ #  mountPath: /var/lib/postgresql
 
 nodeSelector: {}
 
