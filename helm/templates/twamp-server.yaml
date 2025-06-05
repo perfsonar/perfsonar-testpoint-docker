@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: twamp-config
+data:
+  twamp-server.conf: |
+    user            twamp
+    group           twamp
+    verbose
+    facility        local5
+    loglocation
+    vardir          /var/run
+    datadir         /var/lib/twamp
+    testports 18760-18770
