@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-postgres-pvc
   namespace: {{ .Release.Namespace }}
->>>>>>> 9ad28411587c18fd2f8a1710d7a53bbe6449b74c
 spec:
   storageClassName: 
   volumeMode: Filesystem
