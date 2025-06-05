@@ -42,6 +42,20 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+
+{{- define "perfsonar.postgresPVC" }}
+- name: postgresql-data
+  persistentVolumeClaim:
+    claimName: {{ .Release.Name }}-postgres-pvc
+{{- end }}
+
+{{- define "perfsonar.postgresMount" }}
+- name: postgresql-data
+  mountPath: /var/lib/postgresql
+{{- end }}
+
+
+
 {{/*
 Selector labels
 */}}
