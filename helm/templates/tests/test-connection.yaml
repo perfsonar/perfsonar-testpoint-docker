@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "perfsonar.fullname" }}']
+      args: ['{{ include "perfsonar.fullname" . }}:80']
   restartPolicy: Never
