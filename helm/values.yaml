@@ -110,6 +110,14 @@ volumes:
    configMap:
      name: pscheduler-configmap
 
+ - name: owampconfig
+   configMap:
+     name: owamp-config 
+
+ - name: twampconfig
+   configMap:
+     name: twamp-config 
+
  - name: postgresql-data
    persistentVolumeClaim:
      claimName: postgres-pvc
@@ -119,6 +127,14 @@ volumeMounts:
  - name: pschedulerconfig
    mountPath: "/etc/perfsonar/psconfig"
    #   subPath: pscheduler-agent-logger.conf
+   readOnly: true
+
+ - name: owampconfig
+   mountPath: "/etc/owamp-server/owamp-server.conf"
+   readOnly: true
+
+ - name: twampconfig
+   mountPath: "/etc/twamp-server/twamp-server.conf"
    readOnly: true
 
  - name: postgresql-data
