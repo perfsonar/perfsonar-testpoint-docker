@@ -118,6 +118,14 @@ volumes:
    configMap:
      name: twamp-config 
 
+ - name: twamplimits
+   configMap:
+     name: twamp-limits
+
+ - name: owamplimits
+   configMap:
+     name: owamp-limits
+
  #- name: postgresql-data
  #  persistentVolumeClaim:
  #    claimName: postgres-pvc
@@ -130,11 +138,23 @@ volumeMounts:
    readOnly: true
 
  - name: owampconfig
-   mountPath: "/etc/owamp-server"
+   mountPath: "/etc/owamp-server/owamp-server.conf"
+   subPath: owamp-server.conf
    readOnly: true
 
  - name: twampconfig
-   mountPath: "/etc/twamp-server"
+   mountPath: "/etc/twamp-server/twamp-server.conf"
+   subPath: twamp-server.conf
+   readOnly: true
+
+ - name: twamplimits
+   mountPath: "/etc/twamp-server/twamp-server.limits"
+   subPath: twamp-server.limits
+   readOnly: true
+
+ - name: owamplimits
+   mountPath: "/etc/twamp-server/owamp-server.limits"
+   subPath: owamp-server.limits
    readOnly: true
 
  #- name: postgresql-data
