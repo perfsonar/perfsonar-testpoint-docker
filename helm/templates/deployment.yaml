@@ -76,13 +76,13 @@ spec:
           {{- end }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- include "perfsonar.postgresMount" . | nindent 12 }}
-            {{- with .Values.volumeMounts }}
+            {{- include "perfsonar.postgresMount" $ | nindent 12 }}
+            {{- with $.Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
       volumes:
-        {{- include "perfsonar.postgresPVC" . | nindent 8 }}
-        {{- with .Values.volumes }}
+        {{- include "perfsonar.postgresPVC" $ | nindent 8 }}
+        {{- with $.Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       nodeSelector:
