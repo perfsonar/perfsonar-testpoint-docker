@@ -65,4 +65,4 @@ data:
     args=('/var/log/perfsonar/psconfig-pscheduler-agent-transactions.log', 'a')
 kind: ConfigMap
 metadata:
-  name: pscheduler-configmap
+  name: {{ .Release.Name }}-pscheduler-configmap

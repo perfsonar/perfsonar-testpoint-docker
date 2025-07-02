@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: twamp-limits
+  name: {{ .Release.Name }}-twamp-limits
 data:
   twamp-server.limits: |
     limit root with disk=0,\

@@ -77,11 +77,56 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
 
+           - name: {{ .Release.Name }}-pschedulerconfig
+             mountPath: "/etc/perfsonar/psconfig"
+             readOnly: true
+
+           - name: {{ .Release.Name }}-owampconfig
+             mountPath: "/etc/owamp-server/owamp-server.conf"
+             subPath: owamp-server.conf
+             readOnly: true
+
+           - name: {{ .Release.Name }}-twampconfig
+             mountPath: "/etc/twamp-server/twamp-server.conf"
+             subPath: twamp-server.conf
+             readOnly: true
+
+           - name: {{ .Release.Name }}-twamplimits
+             mountPath: "/etc/twamp-server/twamp-server.limits"
+             subPath: twamp-server.limits
+             readOnly: true
+
+           - name: {{ .Release.Name }}-owamplimits
+             mountPath: "/etc/twamp-server/owamp-server.limits"
+             subPath: owamp-server.limits
+             readOnly: true
+
       volumes:
         {{- include "perfsonar.postgresPVC" $ | nindent 8 }}
         {{- with $.Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+
+
+         - name: {{ .Release.Name }}-pschedulerconfig
+           configMap:
+             name: {{ .Release.Name }}-pscheduler-configmap
+
+         - name: {{ .Release.Name }}-owampconfig
+           configMap:
+             name: {{ .Release.Name }}-owamp-config 
+
+         - name: {{ .Release.Name }}-twampconfig
+           configMap:
+             name: {{ .Release.Name }}-twamp-config 
+
+         - name: {{ .Release.Name }}-twamplimits
+           configMap:
+            name: {{ .Release.Name }}-twamp-limits
+
+         - name: {{ .Release.Name }}-owamplimits
+           configMap:
+             name: {{ .Release.Name }}-owamp-limits
 
       {{- with $.Values.nodeSelector }}
       nodeSelector:

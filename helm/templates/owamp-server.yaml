@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: owamp-config
+  name: {{ .Release.Name }}-owamp-config
 data:
   owamp-server.conf: |
     user            owamp

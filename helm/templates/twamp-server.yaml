@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: twamp-config
+  name: {{ .Release.Name }}-twamp-config
 data:
   twamp-server.conf: |
     user            twamp
