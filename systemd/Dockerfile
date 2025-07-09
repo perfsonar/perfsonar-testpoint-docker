@@ -1,8 +1,8 @@
 FROM ubuntu:22.04
 
-ENV container docker
-ENV LC_ALL C
-ENV DEBIAN_FRONTEND noninteractive
+ENV container=docker
+ENV LC_ALL=C
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sed -i 's/# deb/deb/g' /etc/apt/sources.list
 
@@ -67,8 +67,8 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 # -----------------------------------------------------------------------
 
-RUN curl -o /etc/apt/sources.list.d/perfsonar-minor-staging.list http://downloads.perfsonar.net/debian/perfsonar-minor-staging.list \
-    && curl http://downloads.perfsonar.net/debian/perfsonar-staging.gpg.key | apt-key add - \
+RUN curl -o /etc/apt/sources.list.d/perfsonar-release.list https://downloads.perfsonar.net/debian/perfsonar-release.list \
+    && curl https://downloads.perfsonar.net/debian/perfsonar-release.gpg.key | apt-key add - \
     && add-apt-repository universe
 
 RUN apt-get update \
