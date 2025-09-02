@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "perfsonar.fullname" . }}
+  labels:
+    {{- include "perfsonar.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "perfsonar.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "perfsonar.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "perfsonar.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: init-postgresql
+          image: ghcr.io/perfsonar/testpoint:v5.2.0-b1.2-amd64
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ ! -d "/var/lib/postgresql/data/pg_wal" ]; then
+                echo "Initializing PostgreSQL database..."
+                cp -rP /var/lib/postgresql/* /var/lib/postgresql-1/
+                chown -R postgres:postgres /var/lib/postgresql-1/
+              else
+                echo "PostgreSQL data directory already initialized."
+              fi
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql-1
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- include "perfsonar.postgresMount" $ | nindent 12 }}
+            {{- with $.Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            - name: {{ .Release.Name }}-pschedulerconfig
+              mountPath: "/etc/perfsonar/psconfig"
+              readOnly: true
+            - name: {{ .Release.Name }}-owampconfig
+              mountPath: "/etc/owamp-server/owamp-server.conf"
+              subPath: owamp-server.conf
+              readOnly: true
+            - name: {{ .Release.Name }}-twampconfig
+              mountPath: "/etc/twamp-server/twamp-server.conf"
+              subPath: twamp-server.conf
+              readOnly: true
+            - name: {{ .Release.Name }}-twamplimits
+              mountPath: "/etc/twamp-server/twamp-server.limits"
+              subPath: twamp-server.limits
+              readOnly: true
+            - name: {{ .Release.Name }}-owamplimits
+              mountPath: "/etc/twamp-server/owamp-server.limits"
+              subPath: owamp-server.limits
+              readOnly: true
+
+      volumes:
+        {{- include "perfsonar.postgresPVC" $ | nindent 8 }}
+        {{- with $.Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        - name: {{ .Release.Name }}-pschedulerconfig
+          configMap:
+            name: {{ .Release.Name }}-pscheduler-configmap
+        - name: {{ .Release.Name }}-owampconfig
+          configMap:
+            name: {{ .Release.Name }}-owamp-config 
+        - name: {{ .Release.Name }}-twampconfig
+          configMap:
+            name: {{ .Release.Name }}-twamp-config 
+        - name: {{ .Release.Name }}-twamplimits
+          configMap:
+           name: {{ .Release.Name }}-twamp-limits
+        - name: {{ .Release.Name }}-owamplimits
+          configMap:
+            name: {{ .Release.Name }}-owamp-limits
+
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with $.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with $.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
