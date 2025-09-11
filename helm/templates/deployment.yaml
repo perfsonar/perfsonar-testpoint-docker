@@ -79,6 +79,9 @@ spec:
             - name: {{ .Release.Name }}-pschedulerconfig
               mountPath: "/etc/perfsonar/psconfig"
               readOnly: true
+            - name: {{ .Release.Name }}-pscheduleragentconfig
+              mountPath: "/etc/perfsonar/psconfig"
+              readOnly: true
             - name: {{ .Release.Name }}-owampconfig
               mountPath: "/etc/owamp-server/owamp-server.conf"
               subPath: owamp-server.conf
@@ -104,6 +107,9 @@ spec:
         - name: {{ .Release.Name }}-pschedulerconfig
           configMap:
             name: {{ .Release.Name }}-pscheduler-configmap
+        - name: {{ .Release.Name }}-pscheduleragentconfig
+          configMap:
+            name: {{ .Release.Name }}-pscheduler-agent-configmap
         - name: {{ .Release.Name }}-owampconfig
           configMap:
             name: {{ .Release.Name }}-owamp-config 
