@@ -78,9 +78,11 @@ spec:
             {{- end }}
             - name: {{ .Release.Name }}-pschedulerconfig
               mountPath: "/etc/perfsonar/psconfig/pscheduler-agent-logger.conf"
+              subPath: pscheduler-agent-logger.conf
               readOnly: true
             - name: {{ .Release.Name }}-pscheduleragentconfig
               mountPath: "/etc/perfsonar/psconfig/pscheduler-agent.json"
+              ubPath: pscheduler-agent.json
               readOnly: true
             - name: {{ .Release.Name }}-owampconfig
               mountPath: "/etc/owamp-server/owamp-server.conf"
