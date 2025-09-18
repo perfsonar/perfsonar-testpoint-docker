@@ -34,7 +34,7 @@ spec:
       {{- end }}
       initContainers:
         - name: init-postgresql
-          image: perfsonar/testpoint:v5.2.0
+          image: perfsonar/testpoint:v5.2.2
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
