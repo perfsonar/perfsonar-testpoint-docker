@@ -1,11 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-loadbalancer
+  name: {{ .Release.Name }}
   labels:
     {{- include "perfsonar.labels" . | nindent 4 }}
+    {{- if .Values.service.annotations }}
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4}}
+    {{- end }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   ports:
     - port: 861
       targetPort: 861
