@@ -21,7 +21,8 @@ serviceAccount:
   name: "default"
 
 podAnnotations: {}
-podLabels: {}
+podLabels:
+  shell-access-enabled: "true"
 
 podSecurityContext: {}
   # fsGroup: 2000
