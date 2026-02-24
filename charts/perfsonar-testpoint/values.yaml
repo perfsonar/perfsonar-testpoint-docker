@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: perfsonar/testpoint
   pullPolicy: IfNotPresent
-  tag: "v5.2.2"
+  tag: "v5.2.4"
 
 imagePullSecrets: []
 # This is to override the chart name.
