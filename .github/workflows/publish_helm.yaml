@@ -1,0 +1,91 @@
+name: Release Helm Charts
+
+on:
+  push:
+    branches:
+      - master
+      - nmaas-helm
+  workflow_dispatch:
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      #
+      # SAFETY GUARD: main must NEVER contain -beta
+      #
+      - name: Fail if beta version on main
+        if: github.ref_name == 'main'
+        run: |
+          CHART_FILE="charts/perfsonar-testpoint/Chart.yaml"
+
+          if [ ! -f "$CHART_FILE" ]; then
+            echo "ERROR: Chart.yaml not found at $CHART_FILE"
+            exit 1
+          fi
+
+          VERSION=$(yq eval '.version' "$CHART_FILE")
+
+          if [[ "$VERSION" == *"-beta" ]]; then
+            echo "ERROR: Beta version detected on main branch: $VERSION"
+            echo "Remove '-beta' before merging to main."
+            exit 1
+          fi
+
+          echo "Version on main is valid: $VERSION"
+
+      #
+      # Configure Git ONLY for nmaas-helm (we may commit there)
+      #
+      - name: Configure Git
+        if: github.ref_name == 'nmaas-helm'
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      #
+      # Pre-release logic: append -beta on nmaas-helm
+      #
+      - name: Prepare beta version (nmaas-helm)
+        if: github.ref_name == 'nmaas-helm'
+        run: |
+          CHART_FILE="charts/perfsonar-testpoint/Chart.yaml"
+
+          if [ ! -f "$CHART_FILE" ]; then
+            echo "ERROR: Chart.yaml not found at $CHART_FILE"
+            exit 1
+          fi
+
+          VERSION=$(yq eval '.version' "$CHART_FILE")
+
+          if [[ "$VERSION" == *"-beta" ]]; then
+            echo "Version already beta: $VERSION"
+            exit 0
+          fi
+
+          echo "Appending -beta to version: $VERSION"
+          yq eval -i '.version += "-beta"' "$CHART_FILE"
+
+          git add "$CHART_FILE"
+          git commit -m "chore(helm): mark chart as beta pre-release"
+          git push
+
+      #
+      # Publish Helm charts
+      #
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          charts_dir: charts
+          skip_existing: ${{ github.ref_name == 'main' }}
+          mark_as_latest: ${{ github.ref_name == 'main' }}

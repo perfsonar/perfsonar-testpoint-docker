@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  pscheduler-agent.json: |
+    {
+        "remotes": []
+    }
+
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-pscheduler-agent-configmap

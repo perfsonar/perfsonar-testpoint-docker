@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: perfsonar/testpoint
+  pullPolicy: IfNotPresent
+  tag: "v5.2.4"
+
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: LoadBalancer
+  annotations: {}
+
+serviceAccount:
+  create: false
+  automount: false
+  annotations: {}
+  name: "default"
+
+podAnnotations: {}
+podLabels:
+  shell-access-enabled: "true"
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+   limits:
+     cpu: 2000m
+     memory: 3072Mi
+   requests:
+     cpu: 1000m
+     memory: 2048Mi
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  storageClass: "-"
+  size: 10Gi
+  accessMode: ReadWriteOnce
