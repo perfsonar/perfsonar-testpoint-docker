@@ -21,4 +21,14 @@ entries:
     urls:
     - https://github.com/perfsonar/perfsonar-testpoint-docker/releases/download/perfsonar-testpoint-0.2.3-beta/perfsonar-testpoint-0.2.3-beta.tgz
     version: 0.2.3-beta
-generated: "2026-02-24T08:52:56.877437337Z"
+  - apiVersion: v2
+    appVersion: 5.2.2
+    created: "2026-02-24T08:54:29.20554887Z"
+    description: A Helm chart for perfsonar-testpoint
+    digest: 47a5ff36e964b57a551ca55f7f48e1998ecf1445aa82cb9e37eafce5b9b4354f
+    name: perfsonar-testpoint
+    type: application
+    urls:
+    - https://github.com/perfsonar/perfsonar-testpoint-docker/releases/download/perfsonar-testpoint-0.2.3-beta/perfsonar-testpoint-0.2.3-beta.tgz
+    version: 0.2.3-beta
+generated: "2026-02-24T08:54:29.205561564Z"
