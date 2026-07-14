@@ -1,10 +1,10 @@
 # perfSONAR Testpoint
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-ENV container docker
-ENV LC_ALL C
-ENV DEBIAN_FRONTEND noninteractive
+ENV container=docker
+ENV LC_ALL=C
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
     && apt-get install -y vim curl gnupg rsyslog net-tools less sysstat iproute2 dnsutils tcpdump software-properties-common supervisor \
@@ -17,7 +17,7 @@ RUN apt-get update \
 # PostgreSQL Server
 #
 
-ENV PG_VERSION=14 \
+ENV PG_VERSION=16 \
     PG_USER=postgres
 
 ENV PG_HOME=/etc/postgresql/$PG_VERSION/main \ 
@@ -47,8 +47,8 @@ COPY rsyslog/owamp-syslog.conf /etc/rsyslog.d/owamp-syslog.conf
 
 # -----------------------------------------------------------------------------
 
-RUN curl -o /etc/apt/sources.list.d/perfsonar-minor-staging.list http://downloads.perfsonar.net/debian/perfsonar-minor-staging.list \
-    && curl http://downloads.perfsonar.net/debian/perfsonar-staging.gpg.key | apt-key add - \
+RUN curl -o /etc/apt/sources.list.d/perfsonar-release.list https://downloads.perfsonar.net/debian/perfsonar-release.list \
+    && curl https://downloads.perfsonar.net/debian/perfsonar-release.gpg.key | apt-key add - \
     && add-apt-repository universe
 
 RUN apt-get update \
@@ -73,6 +73,6 @@ ADD supervisord.conf /etc/supervisord.conf
 EXPOSE 123/udp 443 861 862 5000 5001 5101 5201 5890-5900 8760-9960/tcp 8760-9960/udp 18760-19960/tcp 18760-19960/udp
 
 # add pid directory, logging, and postgres directory
-VOLUME ["/var/run", "/var/lib/pgsql", "/var/log", "/etc/rsyslog.d" ]
+VOLUME ["/var/run", "/var/lib/postgresql", "/var/log", "/etc/rsyslog.d" ]
 
-CMD /usr/bin/supervisord -c /etc/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
