@@ -52,7 +52,7 @@ RUN curl -o /etc/apt/sources.list.d/perfsonar-minor-staging.list http://download
     && add-apt-repository universe
 
 RUN apt-get update \
-    && apt-get install -y perfsonar-testpoint \
+    && apt-get install -y perfsonar-testpoint perfsonar-web-front-page \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
