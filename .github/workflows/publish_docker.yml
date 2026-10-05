@@ -20,8 +20,8 @@ on:
     # Run when a tag starting with 'v' is pushed
     tags: [ 'v*.*.*' ]
   pull_request:
-    # Run on pull requests to the master branch
-    branches: [ 'master' ]
+    # Run on pull requests to the main branch
+    branches: [ 'main' ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -85,7 +85,7 @@ jobs:
           type=ref,event=branch,suffix=-${{ matrix.suffix_tag }}
           type=ref,event=tag,suffix=-${{ matrix.suffix_tag }}
           type=ref,event=pr,suffix=-${{ matrix.suffix_tag }}
-          type=raw,value=latest-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          type=raw,value=latest-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
     # Extract Docker metadata to be used in systemd image. This primarily calculates the image tags and labels based on branch name, tag name, etc
     # Note that the tag at this phase includes the architecture name so that different architectures don't collide.
@@ -101,7 +101,7 @@ jobs:
           type=ref,event=branch,suffix=-systemd-${{ matrix.suffix_tag }}
           type=ref,event=tag,suffix=-systemd-${{ matrix.suffix_tag }}
           type=ref,event=pr,suffix=-systemd-${{ matrix.suffix_tag }}
-          type=raw,value=systemd-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          type=raw,value=systemd-${{ matrix.suffix_tag }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
     # Build and push Docker image with Buildx (don't push on PR)
     # Note the 'provenance: false' option is set to prevent attestations from being created. Attestations leads to a manifest being created with some unhelpful features in our context:
@@ -155,7 +155,7 @@ jobs:
           type=ref,event=branch
           type=ref,event=tag
           type=ref,event=pr
-          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
     - name: Extract Docker metadata for systemd manifest
       id: manifest_sysd_meta
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -168,7 +168,7 @@ jobs:
           type=ref,event=branch,suffix=-systemd
           type=ref,event=tag,suffix=-systemd
           type=ref,event=pr,suffix=-systemd
-          type=raw,value=systemd,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          type=raw,value=systemd,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
   ##
   # create_manifest: This job creates the multi-arch manifest for the supervisord image. It uses the metadata from the manifest_metadata job to create the manifest.
   create_manifest:
